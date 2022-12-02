@@ -51,6 +51,7 @@ def parse(inputFile, surfacesFile, cellsFile, universesFile, importanceFile, mat
 ################################
 #  INITIALISE
 ################################	
+	
 	parser = MCNPXParser.MCNPXParser(inputFile, surfacesFile)
 	parser.preProcess() # remove unnecessary data out of the mcnpx file (i.e. comments)
 	
@@ -65,25 +66,25 @@ def parse(inputFile, surfacesFile, cellsFile, universesFile, importanceFile, mat
 ################################
 #  PARSING
 ################################
-	print "\nSTART PREPARSING", inputFile
+	print("\nSTART PREPARSING", inputFile)
 	
-	print "\nPREPARSING DATACARDS"
+	print("\nPREPARSING DATACARDS")
 	parser.parseDataCards()
-	print "\t" + str(len(parser.dataCards)) + " DATA CARDS PARSED"
+	print("\t" + str(len(parser.dataCards)) + " DATA CARDS PARSED")
 	
 	# write all materials defined in the mcnpx data block to fileMaterials
 	# including the optional name for the material
-	print parser.materialCards
-	for mat in parser.materialCards.keys(): 
+	print(parser.materialCards)
+	for mat in list(parser.materialCards.keys()): 
 		fileMaterials.writeln(str(mat) + " " + str(parser.materialCardsName[int(mat)]))
 	
-	print "\nPREPARSING SURFACE CARDS"
+	print("\nPREPARSING SURFACE CARDS")
 	parser.parseSurfaces()
-	print "\t" + str(len(parser.surfaceCards)) + " SURFACE CARDS PARSED"
+	print("\t" + str(len(parser.surfaceCards)) + " SURFACE CARDS PARSED")
 	for surface in parser.surfaceCards:
 		fileSurfaces.writeln(str(surface) + "&" + str(parser.surfaceCards[surface].mnemonic) + "&" + str(parser.surfaceCards[surface].data)) 
 	
-	print "\nPREPARSING CELL CARDS"
+	print("\nPREPARSING CELL CARDS")
 	parser.parseCells()
 	
 	# write the cellcard with importance 0 to fileImportance
@@ -102,14 +103,14 @@ def parse(inputFile, surfacesFile, cellsFile, universesFile, importanceFile, mat
 			uniLine = uniLine + "&" + str(uniCell)
 		fileUniverses.writeln(uniLine) 
 		
-	print "\t" + str(len(parser.cellCards)) + " CELL CARDS PARSED"
+	print("\t" + str(len(parser.cellCards)) + " CELL CARDS PARSED")
 	
 	# write the tree structure of the cells and universes to file
 	fileCellTree.writeln(parser.createCellTree())
 	
-	print "\nPREPARSING COMPLETED"
+	print("\nPREPARSING COMPLETED")
 	
-	print "TITLE MCNPX: " + parser.title
+	print("TITLE MCNPX: " + parser.title)
 
 	
 	parser.close()
@@ -122,13 +123,13 @@ def initialize():
 		
 	try:
 		opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
-	except getopt.error, msg:
-		print msg
-		print "for help use --help"
+	except getopt.error as msg:
+		print(msg)
+		print("for help use --help")
 		sys.exit(2)
 	
 	if len(args) != 7:
-		print "ERROR (MCNPXPreParser.py): not enough arguments"
+		print("ERROR (MCNPXPreParser.py): not enough arguments")
 		return 1
 
 	# process arguments

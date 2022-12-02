@@ -1664,6 +1664,7 @@ void MCNPXVisualizer::preparse()
 
 	// Debug info for the output window
 	QString output = "<br /><br />Python MCNPXPreParser.py \"" + curFile + "\"";
+	output += " \"" + QString::fromStdString(Config::getSingleton().TEMP)
 	output += " \"" + QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_surfaces" + "\"";
 	output += " \"" + QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_cells" + "\"";
 	output += " \"" + QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_universes" + "\"";

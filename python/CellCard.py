@@ -72,7 +72,7 @@ class CellCard:
 	#------------------------------------------------------------------------------------------------------------------
 	def printGeometry(self):
 		for geo in self.geometry:
-			print geo,
+			print(geo, end=' ')
 
 	# ==> getPovRayArgs()
 	# Returns the arguments of the cellcard in a dictionary that can be used by pov ray
@@ -118,9 +118,9 @@ class CellCard:
 
 		# CHECK IF THE CELL CONTAINS A LATTICE
 		self.hasLAT = False
-		if (params.has_key('LAT')):
+		if ('LAT' in params):
 			# a cell containing a LAT also needs to have a FILL parameter
-			if (params.has_key('FILL') or params.has_key('*FILL')):
+			if ('FILL' in params or '*FILL' in params):
 				self.hasLAT = True
 				self.typeLAT = int(params['LAT'])
 
@@ -138,7 +138,7 @@ class CellCard:
 							self.minK = int(rangesItems[4])
 							self.maxK = int(rangesItems[5])
 						else:
-							raise(Exception("ERROR (Parse Cell " + str(self.number) + "): Problem reading fill boundary parameters, too little args in cell " + str(self.number)))
+							raise Exception("ERROR (Parse Cell " + str(self.number) + "): Problem reading fill boundary parameters, too little args in cell " + str(self.number))
 
 						# parse the universes of the lattice
 						latUniverses = re.split('[\s]+', params['FILL'][len(ranges.group(0)):])
@@ -157,16 +157,16 @@ class CellCard:
 						self.latUniverses = latUniversesNew
 					else:
 						#print "ERROR (Cell " + str(self.number) + "): no fully specified fill found in cell " + str(self.number) + " [CellCard::interpretParameters]"
-						raise(Exception("ERROR (Parse Cell " + str(self.number) + "): No fully specified fill found in cell " + str(self.number)))
+						raise Exception("ERROR (Cell " + str(self.number) + "): no fully specified fill found in cell " + str(self.number) + " [CellCard::interpretParameters]")
 				else:
-					raise(Exception("ERROR (Parse Cell " + str(self.number) + "): Cell " + str(self.number) + " contains a LAT with unknown type " + str(self.typeLAT)))
+					raise Exception
 			else:
-				raise(Exception("ERROR (Parse Cell " + str(self.number) + "): Cell " + str(self.number) + " contains LAT, but no FILL"))
-				print 
+				raise Exception
+				print() 
 				return 0
-		elif (params.has_key('FILL') or params.has_key('*FILL')):
+		elif ('FILL' in params or '*FILL' in params):
 			if (not self.hasLAT):
-				if params.has_key('FILL'):
+				if 'FILL' in params:
 					fill = params['FILL']
 				else:
 					fill = params['*FILL']
@@ -187,14 +187,14 @@ class CellCard:
 
 					# check if there is a rotation defined on the fill parameters	
 					if (len(transformParamsItems) >= 12):
-						if (params.has_key('*FILL')):
+						if ('*FILL' in params):
 							for i in range(3, len(transformParamsItems)):
 								transformParamsItems[i] = math.cos(float(transformParamsItems[i])*math.pi / 180.0)
 						self.universeRotation = Rotation.Rotation(transformParamsItems[3], transformParamsItems[4], transformParamsItems[5],
 											transformParamsItems[6], transformParamsItems[7], transformParamsItems[8],
 											transformParamsItems[9], transformParamsItems[10], transformParamsItems[11])
 					
-		if (params.has_key('TRCL')):
+		if ('TRCL' in params):
 			trcl = params['TRCL']
 			transformParams = re.findall('(?<=\()[\d,\D,\s]+(?=\))', trcl)
 			if (len(transformParams) >= 1):
@@ -210,7 +210,7 @@ class CellCard:
 						transformParamsItems[6], transformParamsItems[7], transformParamsItems[8],
 						transformParamsItems[9], transformParamsItems[10], transformParamsItems[11])
 					
-		elif (params.has_key('*TRCL')):
+		elif ('*TRCL' in params):
 			trcl = params['*TRCL']
 			transformParams = re.findall('(?<=\()[\d,\D,\s]+(?=\))', trcl)
 			if (len(transformParams) >= 1):

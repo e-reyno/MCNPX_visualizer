@@ -24,7 +24,7 @@ re.DOTALL)
      if s:
        self.filedata.extend(open(s.groups()[0]).readlines() );
        self.filedataWithComments.extend(open(s.groups()[0]).readlines() );
-       print "Including file %s" % s.groups()[0]
+       print("Including file %s" % s.groups()[0])
      else:
        self.filedata.append(line);
        self.filedataWithComments.append(line);

@@ -186,8 +186,8 @@ class MCNPXParser:
                 card.parseParameters()
                 
                 # see if the cell is part of a universe. If so, add it the universe
-                if (card.params.has_key('U')):
-                    if (self.universes.has_key(card.params['U'])):
+                if ('U' in card.params):
+                    if (card.params['U'] in self.universes):
                         self.universes[card.params['U']].append(card.number)
                     else:
                         self.universes[card.params['U']] = [card.number]
@@ -204,15 +204,15 @@ class MCNPXParser:
                 card.material = int(cellCard[1])
                 geometryStartPosition = 2
                 # BEWARE: if there is no material specified there is no density so we can parse directly the geometry
-                if (card.material is not 0):
+                if (card.material != 0):
                     # density is specified
                     try:
                         card.d = float(cellCard[2])
                     except ValueError:
                         pos = cellCard[2].find('-', 1)
-                        if (pos is not -1):
+                        if (pos != -1):
                             cellCard[2] = cellCard[2][0:pos] + 'E' + cellCard[2][pos:]
-                            print "WARNING: Bad density input for cell " + str(card.number) + " solved to " + cellCard[2]
+                            print("WARNING: Bad density input for cell " + str(card.number) + " solved to " + cellCard[2])
                             
                     geometryStartPosition = 3
                 else:
@@ -241,8 +241,8 @@ class MCNPXParser:
                 card.parseParameters()
 
                 # if the cell card is part of a universe, add it
-                if (card.params.has_key('U')):
-                    if (self.universes.has_key(card.params['U'])):
+                if ('U' in card.params):
+                    if (card.params['U'] in self.universes):
                         self.universes[card.params['U']].append(card.number)
                     else:
                         self.universes[card.params['U']] = [card.number]
@@ -259,9 +259,9 @@ class MCNPXParser:
     def parseCellCardGeometry(self, cellNumber):
     
         cellNumber = int(cellNumber)
-        if (not self.cellCards.has_key(int(cellNumber))):
-            print "Error buildCellCard -> cell " + str(cellNumber) + " not known"
-            raise(Exception("ERROR (Parse Geometry Cell " + str(cellNumber) + "): Cell " + str(cellNumber) + " not known"))
+        if (int(cellNumber) not in self.cellCards):
+            print("Error buildCellCard -> cell " + str(cellNumber) + " not known")
+            raise Exception
             
             return
         cellCard = self.cellCards[cellNumber]
@@ -344,7 +344,7 @@ class MCNPXParser:
     def getGeometryOfCellCard(self, cellNumber):
         cellNumber = int(cellNumber)
         if (int(cellNumber) not in self.cellCards):
-            raise(Exception("ERROR (Build Cell " + str(cellNumber) + "): Cell " + str(cellNumber) + " not known"))
+            raise Exception
             return
         cellCard = self.cellCards[cellNumber]
         
@@ -358,8 +358,8 @@ class MCNPXParser:
     # Returns cellcard that is identified with a cellNumber (if exists)
     #------------------------------------------------------------------------------------------------------------------     
     def getCellCard(self, cellNumber):
-        if (not self.cellCards.has_key(int(cellNumber))):
-            raise(Exception("ERROR (Build Cell " + str(cellNumber) + "): Cell " + str(cellNumber) + " not known"))
+        if (int(cellNumber) not in self.cellCards):
+            raise Exception
             return  0
         return self.cellCards[cellNumber]
 
@@ -376,12 +376,12 @@ class MCNPXParser:
             
             dh = DataHolder()
             #if (card.params["IMP"] == "n=0" or card.params["IMP"] == "N=0"):
-            if (card.params.has_key("IMP")):
+            if ("IMP" in card.params):
                 if (dh.set(re.match('[\w,\s]*n[\w,\s]*=[\s]*0', card.params["IMP"] ,flags=re.IGNORECASE))):
                     continue
             
             # IMPORTANT: CELLS ARE ONLY RENDERED WHEN THEY AREN'T UNIVERSES OR IF THEIR UNIVERSE IS DRAWN FROM A PARENT CELL
-            if (parent == 0 and (card.params.has_key('U'))):
+            if (parent == 0 and ('U' in card.params)):
                 continue
             topLevel.append(card)
         return topLevel
@@ -401,7 +401,7 @@ class MCNPXParser:
         if depth > 22:
             #print card
             #print depth
-            raise(Exception("ERROR: Reached a maximum recursion depth of 22."))
+            raise Exception
             return ""
         
         returnString = ""
@@ -421,7 +421,7 @@ class MCNPXParser:
             dummy[card.params['U']] = card.params['U']
             # seek for all the universes that the lattice contains
             for universeCounter in range(0, len(card.latUniverses)):
-                if dummy.has_key(card.latUniverses[universeCounter]):
+                if card.latUniverses[universeCounter] in dummy:
                     # universe already encountered for the lattice
                     #print "HASKEY"
                     continue
@@ -460,7 +460,7 @@ class MCNPXParser:
             return
         
         # IMPORTANT: CELLS ARE ONLY RENDERED WHEN THEY AREN'T UNIVERSES OR IF THEIR UNIVERSE IS DRAWN FROM A PARENT CELL
-        if (parent == 0 and (card.params.has_key('U'))):
+        if (parent == 0 and ('U' in card.params)):
             return 0
         
         # check if void cells need to be drawn
@@ -472,7 +472,7 @@ class MCNPXParser:
         totalPovRayBuild = self.buildSubGeometry(card.fullGeometry, card, card.getPovRayArgs(), useColor, scale)# )
 
         if card.number == 201:
-            print card
+            print(card)
             
         if (self.complementCard != None):
             return totalPovRayBuild
@@ -518,7 +518,7 @@ class MCNPXParser:
         
         # current universe of the lattice cell card (also used in the lattice)
         latticeCardUniverse = -1
-        if(latticeCard.params.has_key('U')):
+        if('U' in latticeCard.params):
             latticeCardUniverse = latticeCard.params['U']
         
         #latticeCellCardWithoutColor = self.buildSubGeometry(latticeCard.fullGeometry, latticeCard, {}, False)
@@ -568,7 +568,7 @@ class MCNPXParser:
             # check for infinite direction
             if (latticeCard.minK == 0 and latticeCard.maxK == 0):
                 if (not hasBB or not bbParent):
-                    raise(Exception("ERROR (Build Cell " + str(latticeCard.number) + "): Bounding box of lattice card must be known in order to fill the lattice correctly."))
+                    raise Exception
                     minK = 0
                     maxK = 0
                 else:
@@ -584,7 +584,7 @@ class MCNPXParser:
                 
             if (latticeCard.minJ == 0 and latticeCard.maxJ == 0):
                 if (not hasBB or not bbParent):
-                    raise(Exception("ERROR (Build Cell " + str(latticeCard.number) + "): Bounding box of lattice card must be known in order to fill the lattice correctly."))
+                    raise Exception
                     minJ = 0
                     maxJ = 0
                 else:
@@ -598,12 +598,12 @@ class MCNPXParser:
                 minJ = latticeCard.minJ
                 maxJ = latticeCard.maxJ
                 
-            print "minJ: " + str(minJ)
-            print "maxJ: " + str(maxJ)
+            print("minJ: " + str(minJ))
+            print("maxJ: " + str(maxJ))
             
             if (latticeCard.minI == 0 and latticeCard.maxI == 0):
                 if (not hasBB or not bbParent):
-                    raise(Exception("ERROR (Build Cell " + str(latticeCard.number) + "): Bounding box of lattice card must be known in order to fill the lattice correctly."))
+                    raise Exception
                     minI = 0
                     maxI = 0
                 else:
@@ -617,8 +617,8 @@ class MCNPXParser:
                 minI = latticeCard.minI
                 maxI = latticeCard.maxI
                 
-            print "minI: " + str(minI)
-            print "maxI: " + str(maxI)
+            print("minI: " + str(minI))
+            print("maxI: " + str(maxI))
                 
             
             # START LOOP        
@@ -644,11 +644,11 @@ class MCNPXParser:
                                     if (universe):
                                         universe = povray.Object(universe, povray.BoundingBox(bb.buildPOVRay()))
                                         self.declaredUniverses.append([depth, str(declareString),povray.Declare(declareString,  universe)])
-                                if (args.has_key('translate')):
+                                if ('translate' in args):
                                     trans = args['translate']
                                 else:
                                     trans = povray.Vector(0, 0, 0)
-                                if (args.has_key('rotate')):
+                                if ('rotate' in args):
                                     rotate = args['rotate']
                                 else:
                                     rotate = povray.Vector(0, 0, 0)
@@ -684,11 +684,11 @@ class MCNPXParser:
                                     universe = self.buildUniverse(latticeCard.latUniverses[universeCounter], latticeCard.number, depth,{} , buildVoid, bb.buildPOVRay())
                                     self.declaredUniverses.append([depth, str(declareString),povray.Declare(declareString,  universe)])
                                 
-                                if (args.has_key('translate')):
+                                if ('translate' in args):
                                     trans = args['translate']
                                 else:
                                     trans = povray.Vector(0, 0, 0)
-                                if (args.has_key('rotate')):
+                                if ('rotate' in args):
                                     rotate = args['rotate']
                                 else:
                                     rotate = povray.Vector(0, 0, 0)
@@ -702,9 +702,9 @@ class MCNPXParser:
                             else: # no macros
                                 universe = self.buildUniverse(latticeCard.latUniverses[universeCounter], latticeCard.number, depth,{} , buildVoid, bb.buildPOVRay())
                                 if (universe):
-                                    if (universe.kwargs.has_key('translate')):
-                                            print "ERROR: Two translations at the same time"
-                                    for a in args.keys():
+                                    if ('translate' in universe.kwargs):
+                                            print("ERROR: Two translations at the same time")
+                                    for a in list(args.keys()):
                                         universe.kwargs[a] = args[a]    
                                     it = universe
                                 else:
@@ -725,7 +725,7 @@ class MCNPXParser:
         if (latticeCard.typeLAT == 2):
             hexOffset = self.getHexOffset(latticeCard)
             if (not hexOffset):
-                raise(Exception("ERROR (Build Cell " + str(latticeCard.number) + " LAT=2): HexOffset could not be calculated"))
+                raise Exception
                 return
             offsetZ = [0, 0, latticeCard.latticeWidth[2]]
             # normal = [0, 1, 0]
@@ -743,7 +743,7 @@ class MCNPXParser:
             offsetZ_extra = 0
             
             if (not bbParent):
-                print parentCard
+                print(parentCard)
                 offset = self.getRectangularOffset(parentCard)
                 noInf = True
                 for i in range(0,len(offset)):
@@ -756,7 +756,7 @@ class MCNPXParser:
             # check for infinite direction
             if (latticeCard.minK == 0 and latticeCard.maxK == 0):
                 if (not hexOffset or not bbParent):
-                    raise(Exception("ERROR (Build Cell " + str(latticeCard.number) + "): Bounding box of lattice card must be known in order to fill the lattice correctly."))
+                    raise Exception
                     minK = 0
                     maxK = 0
                 else:
@@ -770,12 +770,12 @@ class MCNPXParser:
                 minK = latticeCard.minK
                 maxK = latticeCard.maxK
                 
-            print "minK: " + str(minK)
-            print "maxK: " + str(maxK)
+            print("minK: " + str(minK))
+            print("maxK: " + str(maxK))
                 
             if (latticeCard.minJ == 0 and latticeCard.maxJ == 0):
                 if (not hexOffset or not bbParent):
-                    raise(Exception("ERROR (Build Cell " + str(latticeCard.number) + "): Bounding box of lattice card must be known in order to fill the lattice correctly."))
+                    raise Exception
                     minJ = 0
                     maxJ = 0
                 else:
@@ -789,12 +789,12 @@ class MCNPXParser:
                 minJ = latticeCard.minJ
                 maxJ = latticeCard.maxJ
                 
-            print "minJ: " + str(minJ)
-            print "maxJ: " + str(maxJ)
+            print("minJ: " + str(minJ))
+            print("maxJ: " + str(maxJ))
             
             if (latticeCard.minI == 0 and latticeCard.maxI == 0):
                 if (not hexOffset or not bbParent):
-                    raise(Exception("ERROR (Build Cell " + str(latticeCard.number) + "): Bounding box of lattice card must be known in order to fill the lattice correctly."))
+                    raise Exception
                     minI = 0
                     maxI = 0
                 else:
@@ -808,8 +808,8 @@ class MCNPXParser:
                 minI = latticeCard.minI
                 maxI = latticeCard.maxI
                 
-            print "minI: " + str(minI)
-            print "maxI: " + str(maxI)
+            print("minI: " + str(minI))
+            print("maxI: " + str(maxI))
             
             universeCounter = 0  # counter for the current universe position in the lattice (increments for every build lattice item
             for k in range(minK, maxK+1):
@@ -831,7 +831,7 @@ class MCNPXParser:
                             # a_as = 'z'
                             t = k
                         else:
-                            raise(Exception("ERROR (Build Cell " + str(latticeCard.number) + " LAT=2): HexOffset could not be calculated, no 'a' found in hex offset"))
+                            raise Exception
                             return
                         
                         offsetX_extra = 0
@@ -844,7 +844,7 @@ class MCNPXParser:
                         elif (hexOffset['z'] == 'b'):
                             offsetZ_extra = offset
                         else:
-                            raise(Exception("ERROR (Build Cell " + str(latticeCard.number) + " LAT=2): HexOffset could not be calculated, no 'a' found in hex offset"))
+                            raise Exception
                             return
                         
                         args = {}
@@ -862,11 +862,11 @@ class MCNPXParser:
                                 if (not hasKey):
                                     universe = self.buildSubGeometry(latticeCard.fullGeometry, latticeCard, {}, True)
                                     self.declaredUniverses.append([depth, str(declareString),povray.Declare(declareString,  universe)])
-                                if (args.has_key('translate')):
+                                if ('translate' in args):
                                     trans = args['translate']
                                 else:
                                     trans = povray.Vector(0, 0, 0)
-                                if (args.has_key('rotate')):
+                                if ('rotate' in args):
                                     rotate = args['rotate']
                                 else:
                                     rotate = povray.Vector(0, 0, 0)
@@ -891,12 +891,12 @@ class MCNPXParser:
                                     universe = self.buildUniverse(latticeCard.latUniverses[universeCounter], latticeCard.number, depth,{} , buildVoid)
                                     self.declaredUniverses.append([depth, str(declareString),povray.Declare(declareString,  universe)])
 
-                                if (args.has_key('translate')):
+                                if ('translate' in args):
                                     trans = args['translate']
     
                                 else:
                                     trans = povray.Vector(0, 0, 0)
-                                if (args.has_key('rotate')):
+                                if ('rotate' in args):
                                     rotate = args['rotate']
                                 else:
                                     rotate = povray.Vector(0, 0, 0)
@@ -910,7 +910,7 @@ class MCNPXParser:
                             else: # no macros   
                                 universe = self.buildUniverse(latticeCard.latUniverses[universeCounter], latticeCard.number, depth,{}, buildVoid)
                                 if (universe):
-                                    for a in args.keys():
+                                    for a in list(args.keys()):
                                         universe.kwargs[a] = args[a]
                                     it = universe#povray.Object(universe, **args)#bbLatticeItem, clippedBy2, **args)
                                 else:
@@ -934,7 +934,7 @@ class MCNPXParser:
             #   elements.append(clippedBy)
             return povray.Union(*lattice)#, **parentCard.getPovRayArgs())#, **args)
         else:
-            print "ERROR (buildLattice) => lattice only consists of 1 povray element"
+            print("ERROR (buildLattice) => lattice only consists of 1 povray element")
             lattice = lattice[0]
             return lattice
         
@@ -955,7 +955,7 @@ class MCNPXParser:
             # single element or intersection
             intersection = re.split('[\s]+', geometry)
             container.Container.remove_values_from_list(intersection, "")
-            if (len(intersection) is 0 ):
+            if (len(intersection) == 0 ):
                 return 0 # no element in geometry
             else:
                 # totalBoundingBox will grow additive for every surface in it
@@ -963,7 +963,7 @@ class MCNPXParser:
                 totalBoundingBox.exists = True
                 for geom in intersection:
                     if (re.search('[a-z,A-Z]+', geom)):
-                        raise(Exception("ERROR (Build Geometry " + str(geometry) + "): Unable to find bounding box for subsurface " + str(geom)))
+                        raise Exception
                         return 0
                     else:
                         surface = geom
@@ -973,7 +973,7 @@ class MCNPXParser:
                             return 0 # unable to find bounding box for complements
                         else:
                             surface = surface
-                        print geometry
+                        print(geometry)
                         bb =  self.surfaceCards[int(surface)].getBoundingBox()
                         if (bb):
                             totalBoundingBox.append(bb)
@@ -1253,8 +1253,8 @@ class MCNPXParser:
             bbExists = False
         
         if (bbExists):  
-            print "jaja"
-            print card
+            print("jaja")
+            print(card)
             box = self.getBoundingBoxOfGeometry(surface)
             # copy the bounding box in bb
             if (box):
@@ -1263,8 +1263,8 @@ class MCNPXParser:
         else:
             bb.exists = 0
         
-        if (not self.materialCards.has_key((card.material)) and (card.material != 0)):
-            raise(Exception("ERROR (Build Cell " + str(card.number) + " Material): Material " + str(card.material) + " of cell " + str(card.number) + " not known!"))
+        if ((card.material) not in self.materialCards and (card.material != 0)):
+            raise Exception
         return self.buildSurfaceCard(int(surfaceCard), card.material, useColor, useInverse)
     # END buildCellSurface(self, surface, card, bb, useColor=True):
 
@@ -1282,10 +1282,10 @@ class MCNPXParser:
     #------------------------------------------------------------------------------------------------------------------ 
     def buildUniverse(self, universeNumber, parent, depth, povRayArgs = {}, buildVoid = False, clippedBy=0, useColor = True):
         if (depth+1 > 22):
-            raise(Exception("ERROR: Reached a maximum recursion depth of 22 (call from parent " + str(parent) + " to universe " + str(universeNumber)));
+            raise Exception;
             return
-        if (not self.universes.has_key(str(universeNumber))):
-            raise(Exception("ERROR (Build Universe " + str(universeNumber) + "): Universe " + str(universeNumber) + " not found."))
+        if (str(universeNumber) not in self.universes):
+            raise Exception
             return
 
         if (self.useMacros):
@@ -1300,11 +1300,11 @@ class MCNPXParser:
                     if item:
                         universeItems.append(povray.Object(item))
                 self.declaredUniverses.append([depth, str(universeNumber),povray.Declare("universe" + str(universeNumber), *universeItems)])
-            if (povRayArgs.has_key('translate')):
+            if ('translate' in povRayArgs):
                 trans = povRayArgs['translate']
             else:
                 trans = povray.Vector(0, 0, 0)
-            if (povRayArgs.has_key('rotate')):
+            if ('rotate' in povRayArgs):
                 rotate = povRayArgs['rotate']
             else:
                 rotate = povray.Vector(0, 0, 0)
@@ -1446,7 +1446,7 @@ class MCNPXParser:
         # if the surface can be build with colors and the material is defined, request it from the colorMap
         # if transparency if entirely 0 => does not render the surface
         if (material != "" and int(material) >= 0 and useColor):
-            if (self.colorMap.has_key(str(material))):
+            if (str(material) in self.colorMap):
                 materialColor = self.colorMap[str(material)].toPovRay() #self.getMaterialColor(material)
                 transparancy = self.colorMap[str(material)].alpha
                 if (transparancy == 0.0):
@@ -1479,7 +1479,7 @@ class MCNPXParser:
     #------------------------------------------------------------------------------------------------------------------ 
     def buildSurfaceCard(self, surfaceNumber, material, useColor, inverse=False, bb=0):
         if (surfaceNumber not in self.surfaceCards):
-            raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " not known"))
+            raise Exception
             return
         
         surfaceCard = self.surfaceCards[surfaceNumber]
@@ -1490,15 +1490,15 @@ class MCNPXParser:
             inverseWrite = ''
             
         if (self.complementCard != None):
-            print str(material) + " to " + str(self.complementCard.material)
+            print(str(material) + " to " + str(self.complementCard.material))
             material = self.complementCard.material
             
-            print "material complement"
+            print("material complement")
 
         # if the surface can be build with colors and the material is defined, request it from the colorMap
         # if transparency if entirely 0 => does not render the surface
         if (material != "" and int(material) >= 0 and useColor):
-            if (self.colorMap.has_key(str(material))):
+            if (str(material) in self.colorMap):
                 materialColor = self.colorMap[str(material)].toPovRay() #self.getMaterialColor(material)
                 transparancy = self.colorMap[str(material)].alpha
                 if (transparancy == 0.0):
@@ -1523,7 +1523,7 @@ class MCNPXParser:
         # P -  with given normal and D  (3000 P A B C D)
         if (surfaceCard.mnemonic == 'P' or surfaceCard.mnemonic == 'p'):
             if (len(surfaceCard.data) != 4):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type P has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 4)"))
+                raise Exception
                 return
             povrayObject = povray.Plane(povray.Vector(surfaceCard.data[0], surfaceCard.data[1], surfaceCard.data[2]), surfaceCard.data[3]/math.sqrt(math.pow(surfaceCard.data[0],2)+math.pow(surfaceCard.data[1],2)+math.pow(surfaceCard.data[2],2))
             , texture, material, material, inverseWrite);
@@ -1531,8 +1531,8 @@ class MCNPXParser:
         # PX - PLANE with normal to x-axis and D (3000 PX D)
         elif (surfaceCard.mnemonic == 'PX' or surfaceCard.mnemonic == 'px'):
             if (len(surfaceCard.data) != 1):
-                print str(len(surfaceCard.data))
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type PX has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 1)"))
+                print(str(len(surfaceCard.data)))
+                raise Exception
                 return
             povrayObject = povray.Plane(povray.Vector(1.0, 0.0, 0.0), surfaceCard.data[0]
             , texture, material, inverseWrite)
@@ -1540,7 +1540,7 @@ class MCNPXParser:
         # PY - PLANE with normal to y-axis and D (3000 PY D)
         elif (surfaceCard.mnemonic == 'PY' or surfaceCard.mnemonic == 'py'):
             if (len(surfaceCard.data) != 1):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type PY has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 1)"))
+                raise Exception
                 return
             povrayObject = povray.Plane(povray.Vector(0.0, 1.0, 0.0), surfaceCard.data[0]
             , texture, material, inverseWrite)
@@ -1548,7 +1548,7 @@ class MCNPXParser:
         # PZ - PLANE with normal to z-axis and D (3000 PZ D)
         elif (surfaceCard.mnemonic == 'PZ' or surfaceCard.mnemonic == 'pz'):
             if (len(surfaceCard.data) != 1):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type PZ has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 1)"))
+                raise Exception
                 return
             povrayObject = povray.Plane(povray.Vector(0.0, 0.0, 1.0), surfaceCard.data[0], texture, material, inverseWrite)
             
@@ -1557,7 +1557,7 @@ class MCNPXParser:
         # SO -  centered at Origin and radius R  (3000 SO R)
         if (surfaceCard.mnemonic == 'SO' or surfaceCard.mnemonic == 'so' or surfaceCard.mnemonic == 's0'):
             if (len(surfaceCard.data) != 1):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type SO has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 1)"))
+                raise Exception
                 return
             povrayObject = povray.Sphere(povray.Vector(0.0, 0.0, 0.0), surfaceCard.data[0]
                 , texture, material, inverseWrite)
@@ -1565,7 +1565,7 @@ class MCNPXParser:
         # S -  General  (3000 SO X Y Z R)
         elif (surfaceCard.mnemonic == 'S' or surfaceCard.mnemonic == 's'):
             if (len(surfaceCard.data) != 4):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type S has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 4)"))
+                raise Exception
                 return
             povrayObject = povray.Sphere(povray.Vector(surfaceCard.data[0], surfaceCard.data[1], surfaceCard.data[2]), surfaceCard.data[3]
                 , texture, material, inverseWrite)
@@ -1573,7 +1573,7 @@ class MCNPXParser:
         # SX -  Centered on x-axis  (3000 SX X R)
         elif (surfaceCard.mnemonic == 'SX' or surfaceCard.mnemonic == 'sx'):
             if (len(surfaceCard.data) != 2):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type SX has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 2)"))
+                raise Exception
                 return
             povrayObject = povray.Sphere(povray.Vector(surfaceCard.data[0], 0.0, 0.0), surfaceCard.data[1]
                 , texture, material, inverseWrite)
@@ -1581,7 +1581,7 @@ class MCNPXParser:
         # SY -  Centered on y-axis  (3000 SY Y R)
         elif (surfaceCard.mnemonic == 'SY' or surfaceCard.mnemonic == 'sy'):
             if (len(surfaceCard.data) != 2):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type SY has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 2)"))
+                raise Exception
                 return
             povrayObject = povray.Sphere(povray.Vector(0.0, surfaceCard.data[0], 0.0), surfaceCard.data[1]
                 , texture, material, inverseWrite)
@@ -1589,7 +1589,7 @@ class MCNPXParser:
         # SZ -  Centered on z-axis  (3000 SZ Z R)
         elif (surfaceCard.mnemonic == 'SZ' or surfaceCard.mnemonic == 'sz'):
             if (len(surfaceCard.data) != 2):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type SZ has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 2)"))
+                raise Exception
                 return
             povrayObject = povray.Sphere(povray.Vector(0.0, 0.0, surfaceCard.data[0]), surfaceCard.data[1], texture, material, inverseWrite)
             
@@ -1601,7 +1601,7 @@ class MCNPXParser:
         # <=> (0x^2 + y^2 + z^2) + (0xy + 0xz + 0yz) + (0x - 2y'y - 2z'z) + (-R^2 + y'^2 + z'^2)  = 0
         if (surfaceCard.mnemonic == 'C/X' or surfaceCard.mnemonic == 'c/x' or surfaceCard.mnemonic == 'c/X' or surfaceCard.mnemonic == 'C/x'):
             if (len(surfaceCard.data) != 3):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type C/X has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 3)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(0.0, 1.0, 1.0),  # A, B, C
@@ -1615,7 +1615,7 @@ class MCNPXParser:
         # <=> (x^2 + 0y^2 + z^2) + (0xy + 0xz + 0yz) + (-2x'x + 0'y - 2z'z) - R^2 = 0
         elif (surfaceCard.mnemonic == 'C/Y' or surfaceCard.mnemonic == 'c/y' or surfaceCard.mnemonic == 'c/Y' or surfaceCard.mnemonic == 'C/y'):
             if (len(surfaceCard.data) != 3):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type C/Y has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 3)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(1.0, 0.0, 1.0),  # A, B, C
@@ -1629,7 +1629,7 @@ class MCNPXParser:
         # <=> (x^2 + y^2 + 0z^2) + (0xy + 0xz + 0yz) + (-2x'x - 2y'y + 0z) - R^2 = 0
         elif (surfaceCard.mnemonic == 'C/Z' or surfaceCard.mnemonic == 'c/z' or surfaceCard.mnemonic == 'c/Z' or surfaceCard.mnemonic == 'C/z'):
             if (len(surfaceCard.data) != 3):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type C/Z has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 3)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(1.0, 1.0, 0.0),  # A, B, C
@@ -1643,7 +1643,7 @@ class MCNPXParser:
         # <=> (0x^2 + y^2 + z^2) + (0xy + 0xz + 0yz) + (0x - 0y + 0z) - R^2 = 0
         elif (surfaceCard.mnemonic == 'CX' or surfaceCard.mnemonic == 'cx' or surfaceCard.mnemonic == 'cX' or surfaceCard.mnemonic == 'Cx'):
             if (len(surfaceCard.data) != 1):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type CX has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 1)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(0.0, 1.0, 1.0),  # A, B, C
@@ -1657,7 +1657,7 @@ class MCNPXParser:
         # <=> (x^2 + 0y^2 + z^2) + (0xy + 0xz + 0yz) + (0x - 0y + 0z) - R^2 = 0
         elif (surfaceCard.mnemonic == 'CY' or surfaceCard.mnemonic == 'cy' or surfaceCard.mnemonic == 'cY' or surfaceCard.mnemonic == 'Cy'):
             if (len(surfaceCard.data) != 1):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type CY has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 1)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(1.0, 0.0, 1.0),  # A, B, C
@@ -1671,7 +1671,7 @@ class MCNPXParser:
         # <=> (x^2 + y^2 + 0z^2) + (0xy + 0xz + 0yz) + (0x - 0y + 0z) - R^2 = 0
         elif (surfaceCard.mnemonic == 'CZ' or surfaceCard.mnemonic == 'cz' or surfaceCard.mnemonic == 'cZ' or surfaceCard.mnemonic == 'Cz'):
             if (len(surfaceCard.data) != 1):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type CZ has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 1)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(1.0, 1.0, 0.0),  # A, B, C
@@ -1688,7 +1688,7 @@ class MCNPXParser:
         # <=> (-t^2x^2 + y^2 + z^2) + (0xy + 0xz + 0yz) + (2t^2x'x - 2y'y - 2z'z) + (y'^2 + z'^2 - t^2x'^2)  = 0
         if (surfaceCard.mnemonic == 'K/X' or surfaceCard.mnemonic == 'k/x' or surfaceCard.mnemonic == 'k/X' or surfaceCard.mnemonic == 'K/x'):
             if ((len(surfaceCard.data) != 4) and (len(surfaceCard.data) != 5)):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type K/X has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 4 or 5)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(-surfaceCard.data[3], 1.0, 1.0),  # A, B, C
@@ -1702,7 +1702,7 @@ class MCNPXParser:
         # <=> (x^2 - t^2y^2 + z^2) + (0xy + 0xz + 0yz) + (-2x'x + 2t^2y'y - 2z'z) + (x'^2 + z'^2 - t^2y'^2)  = 0
         elif (surfaceCard.mnemonic == 'K/Y' or surfaceCard.mnemonic == 'k/y' or surfaceCard.mnemonic == 'k/Y' or surfaceCard.mnemonic == 'K/y'):
             if ((len(surfaceCard.data) != 4) and (len(surfaceCard.data) != 5)):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type K/Y has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 4 or 5)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(1.0, -surfaceCard.data[3], 1.0),  # A, B, C
@@ -1716,7 +1716,7 @@ class MCNPXParser:
         # <=> (x^2 - y^2 - t^2z^2) + (0xy + 0xz + 0yz) + (-2x'x - 2y'y + 2t^2z'z) + (x'^2 + y'^2 - t^2z'^2)  = 0
         elif (surfaceCard.mnemonic == 'K/Z' or surfaceCard.mnemonic == 'k/z' or surfaceCard.mnemonic == 'k/Z' or surfaceCard.mnemonic == 'K/z'):
             if ((len(surfaceCard.data) != 4) and (len(surfaceCard.data) != 5)):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type K/Z has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 4 or 5)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(1.0, 1.0, -surfaceCard.data[3]),  # A, B, C
@@ -1730,7 +1730,7 @@ class MCNPXParser:
         # <=> (-t^2x^2 + y^2 + z^2) + (0xy + 0xz + 0yz) + (2t^2x'x + 0y + 0z) - t^2x'^2  = 0
         elif (surfaceCard.mnemonic == 'KX' or surfaceCard.mnemonic == 'kx' or surfaceCard.mnemonic == 'kX' or surfaceCard.mnemonic == 'Kx'):
             if ((len(surfaceCard.data) != 2) and (len(surfaceCard.data) != 3)):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type KX has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 2 or 3)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(-surfaceCard.data[1], 1.0, 1.0),  # A, B, C
@@ -1744,7 +1744,7 @@ class MCNPXParser:
         # <=> (x^2 - t^2y^2 + z^2) + (0xy + 0xz + 0yz) + (0x + 2t^2y'y + 0z) - t^2y'^2  = 0
         elif (surfaceCard.mnemonic == 'KY' or surfaceCard.mnemonic == 'ky' or surfaceCard.mnemonic == 'kY' or surfaceCard.mnemonic == 'Ky'):
             if ((len(surfaceCard.data) != 2) and (len(surfaceCard.data) != 3)):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type KY has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 3 or 3)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(1.0, -surfaceCard.data[1], 1.0),  # A, B, C
@@ -1758,7 +1758,7 @@ class MCNPXParser:
         # <=> (x^2 - y^2 - t^2z^2) +  + (0x + 0y + 2t^2z'z) - t^2z'^2  = 0
         elif (surfaceCard.mnemonic == 'KZ' or surfaceCard.mnemonic == 'kz' or surfaceCard.mnemonic == 'kZ' or surfaceCard.mnemonic == 'Kz'):
             if ((len(surfaceCard.data) != 2) and (len(surfaceCard.data) != 3)):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type KZ has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 2 or 3)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(1.0, 1.0, -surfaceCard.data[1]),  # A, B, C
@@ -1775,7 +1775,7 @@ class MCNPXParser:
         # <=> [Ax^2 + By^2 + Cz^2] + [0xy + 0xz + 0yz] + [ (-2Ax'+2D)x + (-2By'+2E)y + (-2Cz' + 2F)z ] + [Ax'^2 + By'^2 + Cz'^2 - 2Dx' - 2Ey' - 2Fz' + G]   = 0
         if (surfaceCard.mnemonic == 'SQ' or surfaceCard.mnemonic == 'sq' or surfaceCard.mnemonic == 'sQ' or surfaceCard.mnemonic == 'Sq'):
             if (len(surfaceCard.data) != 10):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type SQ has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 10)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(surfaceCard.data[0], surfaceCard.data[1], surfaceCard.data[2]),  # A, B, C
@@ -1792,7 +1792,7 @@ class MCNPXParser:
         # <=> [Ax^2 + By^2 + Cz^2] + [0xy + 0xz + 0yz] + [ (-2Ax'+2D)x + (-2By'+2E)y + (-2Cz' + 2F)z ] + [Ax'^2 + By'^2 + Cz'^2 - 2Dx' - 2Ey' - 2Fz' + G]   = 0
         if (surfaceCard.mnemonic == 'GQ' or surfaceCard.mnemonic == 'gq' or surfaceCard.mnemonic == 'gQ' or surfaceCard.mnemonic == 'Gq'):
             if (len(surfaceCard.data) != 10):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type GQ has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 10)"))
+                raise Exception
                 return
             povrayObject = povray.Quadric(
                 povray.Vector(surfaceCard.data[0], surfaceCard.data[1], surfaceCard.data[2]),  # A, B, C
@@ -1807,7 +1807,7 @@ class MCNPXParser:
         # BOX (Box) # http://www.povray.org/documentation/view/3.6.1/276/
         if (surfaceCard.mnemonic == 'BOX' or surfaceCard.mnemonic == 'box'):
             if (len(surfaceCard.data) != 12):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type BOX has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 12)"))
+                raise Exception
                 return
             targetX = surfaceCard.data[0] + surfaceCard.data[3] + surfaceCard.data[6] + surfaceCard.data[9];
             targetY = surfaceCard.data[1] + surfaceCard.data[4] + surfaceCard.data[7] + surfaceCard.data[10];
@@ -1820,7 +1820,7 @@ class MCNPXParser:
         # RPP (rectangular parallelepiped)  # http://www.povray.org/documentation/view/3.6.1/276/
         elif (surfaceCard.mnemonic == 'RPP' or surfaceCard.mnemonic == 'rpp'):
             if (len(surfaceCard.data) != 6):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type RPP has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 6)"))
+                raise Exception
                 return
             povrayObject = povray.Box(povray.Vector(surfaceCard.data[0], surfaceCard.data[2], surfaceCard.data[4]), povray.Vector(surfaceCard.data[1], surfaceCard.data[3], surfaceCard.data[5])
             , texture, material, inverseWrite)
@@ -1829,7 +1829,7 @@ class MCNPXParser:
         # SPH (sphere)  # http://www.povray.org/documentation/view/3.6.1/283/
         elif (surfaceCard.mnemonic == 'SPH' or surfaceCard.mnemonic == 'sph'):
             if (len(surfaceCard.data) != 4):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type SPH has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 4)"))
+                raise Exception
                 return
             povrayObject = povray.Sphere(povray.Vector(surfaceCard.data[0], surfaceCard.data[1], surfaceCard.data[2]), surfaceCard.data[3]
                 , texture, material, inverseWrite)
@@ -1838,7 +1838,7 @@ class MCNPXParser:
         # RCC (Right Circular Cylinder) # http://www.povray.org/documentation/view/3.6.1/278/
         elif (surfaceCard.mnemonic == 'RCC' or surfaceCard.mnemonic == 'rcc'): 
             if (len(surfaceCard.data) != 7):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type RCC has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 7)"))
+                raise Exception
                 return
             povrayObject = povray.Cylinder(povray.Vector(surfaceCard.data[0], surfaceCard.data[1], surfaceCard.data[2]),
                 povray.Vector(surfaceCard.data[3], surfaceCard.data[4], surfaceCard.data[5]),
@@ -1848,7 +1848,7 @@ class MCNPXParser:
         # TRC (Truncated Right Angle Cone)
         elif (surfaceCard.mnemonic == 'TRC' or surfaceCard.mnemonic == 'trc'): 
             if (len(surfaceCard.data) != 8):
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type TRC has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 8)"))
+                raise Exception
                 return
             povrayObject = povray.Cone(
                 povray.Vector(surfaceCard.data[0], surfaceCard.data[1], surfaceCard.data[2]),
@@ -1921,7 +1921,7 @@ class MCNPXParser:
                     h_c = 2
                     args['rotate'] = povray.Vector(90.0, 0.0, 0.0)
                 else:
-                    print "ERROR (Parsing RHP): RHP not parallel to an axis"
+                    print("ERROR (Parsing RHP): RHP not parallel to an axis")
                     return
                 
                 outputCoordinates = []
@@ -1947,17 +1947,17 @@ class MCNPXParser:
                 side1v = container.Container.cross(side1, h)
                 side2v = container.Container.cross(side2, h)
                 side3v = container.Container.cross(side3, h)
-                print "WARNING: Hexagon is not regular and is not been drawn"
+                print("WARNING: Hexagon is not regular and is not been drawn")
             else:
-                raise(Exception("ERROR (Build Surface Card " + str(surfaceNumber) + "): Surface " + str(surfaceNumber) + " of type RHP has not enough or too much arguments (" + str(len(surfaceCard.data)) + " instead of 15)"))
+                raise Exception
                 return
         if (povrayObject == 0):
-            print "WARNING (Build Surface Card " + str(surfaceNumber) + ": Type of surface \'" + str(surfaceCard.mnemonic) + "\' of surface card " + str(surfaceNumber) + " not defined"
+            print("WARNING (Build Surface Card " + str(surfaceNumber) + ": Type of surface \'" + str(surfaceCard.mnemonic) + "\' of surface card " + str(surfaceNumber) + " not defined")
             return 0
         transArgs = surfaceCard.getTransformationArgs()
-        if (transArgs.has_key('translate')):
+        if ('translate' in transArgs):
                 povrayObject.kwargs['translate'] = transArgs['translate']
-        if (transArgs.has_key('matrix')):
+        if ('matrix' in transArgs):
                 povrayObject.kwargs['matrix'] = transArgs['matrix']
         return povrayObject
 
@@ -2058,7 +2058,7 @@ class MCNPXParser:
     # Returns the offset of a rectangular shape specified in a cellcard geometry (offset = [minX, minY, minZ, maxX, maxY, maxZ])
     #------------------------------------------------------------------------------------------------------------------ 
     def getRectangularOffset(self, cellCard):
-        print "simontest" + str(cellCard)
+        print("simontest" + str(cellCard))
         geometry = cellCard.fullGeometry
         if (re.search('\:', geometry)):
             return 0
@@ -2079,8 +2079,8 @@ class MCNPXParser:
                 else:
                     surface = surface
                 boundary = self.surfaceCards[int(surface)].getRectangularOffset(isMin)
-                print "boundary"
-                print boundary
+                print("boundary")
+                print(boundary)
                 for i in range(0,3):
                     if (offset[i] == 'inf'):
                         offset[i] = boundary[i]
@@ -2107,15 +2107,15 @@ class MCNPXParser:
         found = []
         for card in self.cellCards:
             #print self.cellCards[card].params
-            if (self.cellCards[card].params.has_key("IMP")):
+            if ("IMP" in self.cellCards[card].params):
                 dh = DataHolder()
                 if (dh.set(re.match('[\w,\s]*n[\w,\s]*=[\s]*0', self.cellCards[card].params["IMP"] ,flags=re.IGNORECASE))):
                     found.append(self.cellCards[card])
         if (len(found) > 1):
-            print "WARNING: Too much cellcards with imp:n=0"
+            print("WARNING: Too much cellcards with imp:n=0")
             return found
         elif (len(found) == 0):
-            print "WARNING: Celcard with imp:n=0 not found"
+            print("WARNING: Celcard with imp:n=0 not found")
             return 0
         else:
             return found
@@ -2145,8 +2145,8 @@ class MCNPXParser:
             else:   
                 union = re.split('[:]+', geometry)
             offset = ['inf', 'inf', 'inf', 'inf', 'inf', 'inf']
-            print union
-            print "jaja1"
+            print(union)
+            print("jaja1")
             for surface in union:
                 surface = surface.replace(" ", "");
                 if (isComplement):
