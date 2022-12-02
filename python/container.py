@@ -11,6 +11,9 @@
 
 import re
 import math
+import os
+import inspect
+print(inspect.getfile(os))
 from sympy import core, solvers, matrices
 
 class Container:
@@ -75,9 +78,9 @@ class Container:
 		t2 = core.Symbol('t2')
 		solved =  solvers.solve([p1[0]+v1[0]*t1 - p2[0] - v2[0]*t2, p1[1]+v1[1]*t1 - p2[1] - v2[1]*t2, p1[2]+v1[2]*t1 - p2[2] - v2[2]*t2], t1, t2)
 		result = {}
-		if (solved.has_key(t1)):
+		if (t1 in solved):
 			result['t1'] = solved[t1]
-		if (solved.has_key(t2)):
+		if (t2 in solved):
 			result['t2'] = solved[t2]
 		return result
 	

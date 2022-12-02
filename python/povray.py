@@ -96,7 +96,7 @@ class Item:
         file.writeln( str(opt) )
 
     #self.kwargs.items() = self.kwargs.items()    
-    for key in sorted(self.kwargs.iterkeys(), reverse=False):
+    for key in sorted(iter(self.kwargs.keys()), reverse=False):
       if type(self.kwargs[key])==tuple or type(self.kwargs[key])==list:
         val = Vector(*self.kwargs[key])
         file.writeln( "%s %s"%(key,val) )
@@ -117,7 +117,7 @@ class Item:
               opt.write(file)
           else:
             file.writeln( str(opt) )
-      for key,val in self.kwargs.items():
+      for key,val in list(self.kwargs.items()):
           if type(val)==tuple or type(val)==list:
             val = Vector(*val)
             file.writeln( "%s %s"%(key,val) )
