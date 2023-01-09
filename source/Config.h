@@ -27,7 +27,7 @@ class Config : public Singleton<Config>
 	public:
 	Config()
 	{
-	#ifdef _WIN32 || _WIN64
+    #if defined(_WIN32) || defined(_WIN64_)
 		
 		std::cout << QDir::root().currentPath().toStdString() << std::endl;
 		TEMP = QDir::root().currentPath().append( "/temp/").replace("/", "\\").toStdString();

@@ -15,8 +15,9 @@
 #include "OpenGLObject.h"
 
 #include <QString>
+#include <GL/Glu.h>
 #include <QStringList>
-#include <QGLWidget>
+#include <QOpenGLWidget>
 
 
 class OpenGLSphere : public OpenGLObject

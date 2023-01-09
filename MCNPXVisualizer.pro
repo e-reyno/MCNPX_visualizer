@@ -1,13 +1,19 @@
 CONFIG += qt
-QT += opengl
-QT += qt3support
+QT += printsupport
+QT += openglwidgets
+QT += widgets
+QT += core5compat
+QT += gui
 
+QT += core gui sql printsupport
+DEFINES += "_HAS_STD_BYTE=0"
 TEMPLATE = app
 TARGET = MCNPXVisualizer
-
 INCLUDEPATH += source
 DEPENDPATH += source
-
+CONFIG += c++11
+LIBS += -lopengl32
+LIBS += -lglu32
 
 # Input
 HEADERS += source/Camera.h \

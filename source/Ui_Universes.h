@@ -32,7 +32,8 @@
 #include <QVBoxLayout>
 #include <QTreeWidget>
 #include <QStringList>
-
+#include <QPushButton>
+#include <QRegExp>
 #include <iostream>
 
 #include "Cell.h"

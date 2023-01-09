@@ -16,7 +16,8 @@
 
 #include <QString>
 #include <QStringList>
-#include <QGLWidget>
+#include <QWidget>
+#include <GL/gl.h>
 
 
 class OpenGLBox : public OpenGLObject

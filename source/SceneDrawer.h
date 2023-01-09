@@ -9,14 +9,14 @@
 //## (c) Nick Michiels for SCK-CEN Mol (2011)
 //#######################################################################################################################
 
-#include <QGLWidget>
+#include <QtOpenGLWidgets/QOpenGLWidget>
 #include <QString>
 #include <QTimer>
 
 #include "OpenGLObject.h"
 #include "Sections3D.h"
 
-class SceneDrawer : public QGLWidget
+class SceneDrawer : public QOpenGLWidget
 {
 	Q_OBJECT
 
@@ -60,9 +60,8 @@ class SceneDrawer : public QGLWidget
 		bool getSectionsEnabled() { return _sectionsEnabled; }
 
 		void updateCamera();
-
-		void mousePressEvent(QMouseEvent* e);
-		void mouseMoveEvent(QMouseEvent* e);
+        void mousePressEvent(QMouseEvent* e);
+        void mouseMoveEvent(QMouseEvent* e);
 		void mouseReleaseEvent(QMouseEvent* e);
 		void wheelEvent(QWheelEvent *e);
 

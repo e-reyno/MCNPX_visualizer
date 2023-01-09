@@ -14,6 +14,7 @@
 
 #include <QStringList>
 #include <QList>
+
 #include <QByteArray>
 #include <iostream>
 
@@ -124,11 +125,11 @@ void PovRayRenderer::displayOutputMsg(){
 // Seek for progress information for parsing or for rendering
 //--------------------------------------------------------------------
 void PovRayRenderer::parseOutputMessage(QString output)
-{
-	QRegExp re("\\((\\d+),(\\d+)\\)\\s+to\\s+\\((\\d+),(\\d+)\\)\\s*\\w*(\\d+)\\:(\\d+)\\:(\\d+)\\s+Rendering\\s+line\\s+(\\d+)\\s+of\\s+(\\d+)", Qt::CaseInsensitive);
-	QRegExp re2("(\\d+)\\:(\\d+)\\:(\\d+)\\s+Rendering\\s+line\\s+(\\d+)\\s+of\\s+(\\d+)", Qt::CaseInsensitive);
- 	int pos = 0;	
-	while ((pos = re2.indexIn(output, pos)) != -1) {
+{   //still using qreg instead of qregularexpressionn - outdated in qt 6
+    QRegExp re("\\((\\d+),(\\d+)\\)\\s+to\\s+\\((\\d+),(\\d+)\\)\\s*\\w*(\\d+)\\:(\\d+)\\:(\\d+)\\s+Rendering\\s+line\\s+(\\d+)\\s+of\\s+(\\d+)", Qt::CaseInsensitive);
+    QRegExp re2("(\\d+)\\:(\\d+)\\:(\\d+)\\s+Rendering\\s+line\\s+(\\d+)\\s+of\\s+(\\d+)", Qt::CaseInsensitive);
+    int pos = 0;
+    while ((pos = re2.indexIn(output, pos)) != -1) {
 	    _info.renderHour = re2.cap(1).toInt();
 	     _info.renderMin = re2.cap(2).toInt();
 	     _info.renderSec = re2.cap(3).toInt();
@@ -136,7 +137,7 @@ void PovRayRenderer::parseOutputMessage(QString output)
 	     pos += re2.matchedLength();
 	 }
 	 
-	QRegExp re3("(\\d+)\\:(\\d+)\\:(\\d+)\\s+Parsing\\s+(\\d+)K", Qt::CaseInsensitive);
+    QRegExp re3("(\\d+)\\:(\\d+)\\:(\\d+)\\s+Parsing\\s+(\\d+)K", Qt::CaseInsensitive);
  	int pos2 = 0;	
 	while ((pos = re3.indexIn(output, pos2)) != -1) {
 	     // 

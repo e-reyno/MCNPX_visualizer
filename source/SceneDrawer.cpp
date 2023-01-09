@@ -25,7 +25,7 @@
 // Constructor
 //--------------------------------------------------------------------
 SceneDrawer::SceneDrawer(QWidget *parent)
-         : QGLWidget(parent)
+         : QOpenGLWidget(parent)
 {
 	// Create and connect the frame updater
 	_frameUpdateTimer = new QTimer();
@@ -263,7 +263,7 @@ void SceneDrawer::clearScene()
 void SceneDrawer::initializeGL()
  {
 	// Initialize QGLWidget (parent)
-	QGLWidget::initializeGL();
+    QOpenGLWidget::initializeGL();
 
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.4196f,0.5451f,0.6667f,1.0f);
@@ -294,7 +294,7 @@ void SceneDrawer::initializeGL()
 //--------------------------------------------------------------------
 void SceneDrawer::slotOnFrameUpdate()
 {
-	this->updateGL();
+    this->update();
 }
 
 // ==> setAzimuth(azimuth)
@@ -915,19 +915,19 @@ void SceneDrawer::mouseReleaseEvent(QMouseEvent* e)
 // ==> wheelEvent(e)
 //	Use the wheel event to change de distance of the camera
 //--------------------------------------------------------------------
-void SceneDrawer::wheelEvent(QWheelEvent *e)
+void SceneDrawer::wheelEvent(QWheelEvent *event)
 {
-	int numDegrees = e->delta() / 8;
-	float numSteps = numDegrees / 15.0;
+    int numDegrees = event->angleDelta().y() / 8;
+    float numSteps = numDegrees / 15.0;
 
-	if (e->orientation() == Qt::Vertical) 
-		this->setDistance(_distance + numSteps*(0.1)*_distance);
+    if (event->angleDelta().y() > 0)
+        this->setDistance(_distance + numSteps *(0.1)*_distance);
 
 	// Update the statusbar information
 	QString status = QString("Azimuth: %1, Elevation: %2, Distance: %3, StrafeX: %4, StrafeY: %5, StrafeZ: %6").arg(_azimuth, 8, 'f', 3).arg(_elevation, 8, 'f', 3).arg(_distance, 8, 'f', 3).arg(_camStrafeX, 8, 'f', 3).arg(_camStrafeY, 8, 'f', 3).arg(_camStrafeZ, 8, 'f', 3);
 	emit statusChanged(status, 0);	
 
-	e->accept();
+    event->accept();
 }
 
 

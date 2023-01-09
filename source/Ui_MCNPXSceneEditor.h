@@ -13,6 +13,7 @@
 #ifndef UI_MCNPX_SCENE_EDITOR_H
 #define UI_MCNPX_SCENE_EDITOR_H
 
+#include "qgroupbox.h"
 #include <QMainWindow>
 #include <QtGui>
 #include <QPixmap>
@@ -36,6 +37,10 @@
 #include <QSlider>
 #include <QDial>
 #include <QCheckBox>
+#include <qgroupbox.h>
+#include <QLabel>
+#include <QPushButton>
+#include <QRadioButton>
 
 class Ui_MCNPXSceneEditor : public QObject
 {
@@ -1137,66 +1142,66 @@ class Ui_MCNPXSceneEditor : public QObject
 
 		void retranslateUi(QWidget *parent)
 		{
-			groupBox_camera->setTitle(QApplication::translate("parent", "Camera", 0, QApplication::UnicodeUTF8));
-			label_elevation->setText(QApplication::translate("parent", "Elevation:", 0, QApplication::UnicodeUTF8));
-			label_azimuth->setText(QApplication::translate("parent", "Azimuth:", 0, QApplication::UnicodeUTF8));
-			label_strafe->setText(QApplication::translate("parent", "Strafe", 0, QApplication::UnicodeUTF8));
-			label_strafeX->setText(QApplication::translate("parent", "X:", 0, QApplication::UnicodeUTF8));
-			label_strafeY->setText(QApplication::translate("parent", "Y:", 0, QApplication::UnicodeUTF8));
-			label_strafeZ->setText(QApplication::translate("parent", "Z:", 0, QApplication::UnicodeUTF8));
-			label_distanceMin->setText(QApplication::translate("parent", "0", 0, QApplication::UnicodeUTF8));
-			label_dinstanceMax->setText(QApplication::translate("parent", "5000", 0, QApplication::UnicodeUTF8));
-			label_distance->setText(QApplication::translate("parent", "Distance:", 0, QApplication::UnicodeUTF8));
-			checkBox_orthographic->setText(QApplication::translate("parent", "Use Orthographic", 0, QApplication::UnicodeUTF8));
-			groupBox_sections->setTitle(QApplication::translate("parent", "Sections", 0, QApplication::UnicodeUTF8));
-			pushButton_xPlane0->setText(QApplication::translate("parent", "PX", 0, QApplication::UnicodeUTF8));
-			pushButton_yPlane0->setText(QApplication::translate("parent", "PY", 0, QApplication::UnicodeUTF8));
-			pushButton_zPlane0->setText(QApplication::translate("parent", "PZ", 0, QApplication::UnicodeUTF8));
-			checkBox_useSections->setText(QApplication::translate("parent", "Use Sections", 0, QApplication::UnicodeUTF8));
-			checkBox_limitedBB->setText(QApplication::translate("parent", "Limited by bounding box", 0, QApplication::UnicodeUTF8));
-			label_sectionsBase->setText(QApplication::translate("Form", "   Base: ", 0, QApplication::UnicodeUTF8));
-			label_sectionsDistance->setText(QApplication::translate("Form", "  Distance: ", 0, QApplication::UnicodeUTF8));
-			label_originY->setText(QApplication::translate("Form", "   Origin X:", 0, QApplication::UnicodeUTF8));
-			label_originX->setText(QApplication::translate("Form", "Origin Y:", 0, QApplication::UnicodeUTF8));
-			label_originZ->setText(QApplication::translate("Form", "Origin Z:", 0, QApplication::UnicodeUTF8));
-			label_xPlaneMin_Min->setText(QApplication::translate("parent", "-5000", 0, QApplication::UnicodeUTF8));
-			label_xPlaneMin_Max->setText(QApplication::translate("parent", "5000", 0, QApplication::UnicodeUTF8));
-			label_xPlaneMax_Min->setText(QApplication::translate("parent", "-5000", 0, QApplication::UnicodeUTF8));
-			label_xPlaneMax_Max->setText(QApplication::translate("parent", "5000", 0, QApplication::UnicodeUTF8));
-			label_yPlaneMin_Min->setText(QApplication::translate("parent", "-5000", 0, QApplication::UnicodeUTF8));
-			label_yPlaneMin_Max->setText(QApplication::translate("parent", "5000", 0, QApplication::UnicodeUTF8));
-			label_yPlaneMax_Min->setText(QApplication::translate("parent", "-5000", 0, QApplication::UnicodeUTF8));
-			label_yPlaneMax_Max->setText(QApplication::translate("parent", "5000", 0, QApplication::UnicodeUTF8));
-			label_zPlaneMin_Min->setText(QApplication::translate("parent", "-5000", 0, QApplication::UnicodeUTF8));
-			label_zPlaneMin_Max->setText(QApplication::translate("parent", "5000", 0, QApplication::UnicodeUTF8));
-			label_zPlaneMax_Min->setText(QApplication::translate("parent", "-5000", 0, QApplication::UnicodeUTF8));
-			label_zPlaneMax_Max->setText(QApplication::translate("parent", "5000", 0, QApplication::UnicodeUTF8));
-			pushButton_xPlaneMin->setText(QApplication::translate("parent", "X Min", 0, QApplication::UnicodeUTF8));
-			pushButton_xPlaneMax->setText(QApplication::translate("parent", "X Max", 0, QApplication::UnicodeUTF8));
-			pushButton_yPlaneMin->setText(QApplication::translate("parent", "Y Min", 0, QApplication::UnicodeUTF8));
-			pushButton_yPlaneMax->setText(QApplication::translate("parent", "Y Max", 0, QApplication::UnicodeUTF8));
-			pushButton_zPlaneMin->setText(QApplication::translate("parent", "Z Min", 0, QApplication::UnicodeUTF8));
-			pushButton_zPlaneMax->setText(QApplication::translate("parent", "Z Max", 0, QApplication::UnicodeUTF8));
-			label_angleMax->setText(QApplication::translate("Form", "   Angle Max", 0, QApplication::UnicodeUTF8));
-			label_angleMin_Min->setText(QApplication::translate("Form", "-360", 0, QApplication::UnicodeUTF8));
-			label_angleMin_Max->setText(QApplication::translate("Form", "360", 0, QApplication::UnicodeUTF8));
-			label_angleMin->setText(QApplication::translate("Form", "   Angle Min", 0, QApplication::UnicodeUTF8));
-			label_AngleMax_Min->setText(QApplication::translate("Form", "-360", 0, QApplication::UnicodeUTF8));
-			label_angleMax_Max->setText(QApplication::translate("Form", "360", 0, QApplication::UnicodeUTF8));
-			label_radius->setText(QApplication::translate("Form", "   Radius", 0, QApplication::UnicodeUTF8));
-			label_radius_Min->setText(QApplication::translate("Form", "0", 0, QApplication::UnicodeUTF8));
-			label_radius_Max->setText(QApplication::translate("Form", "1000", 0, QApplication::UnicodeUTF8));
-			label_strafeSections->setText(QApplication::translate("Form", "   Strafe", 0, QApplication::UnicodeUTF8));
-			label_strafeXSections->setText(QApplication::translate("Form", "X:", 0, QApplication::UnicodeUTF8));
-			label_strafeYSections->setText(QApplication::translate("Form", "Y:", 0, QApplication::UnicodeUTF8));
-			label_strafeZSections->setText(QApplication::translate("Form", "Z:", 0, QApplication::UnicodeUTF8));
-			checkBox_usePiece->setText(QApplication::translate("Form", "Piece", 0, QApplication::UnicodeUTF8));
-			radioButton_XY->setText(QApplication::translate("Form", "XY", 0, QApplication::UnicodeUTF8));
-			radioButton_YZ->setText(QApplication::translate("Form", "YZ", 0, QApplication::UnicodeUTF8));
-			radioButton_XZ->setText(QApplication::translate("Form", "XZ", 0, QApplication::UnicodeUTF8));
-			label_height->setText(QApplication::translate("Form", "   Height", 0, QApplication::UnicodeUTF8));
-			label_height_Min->setText(QApplication::translate("Form", "0", 0, QApplication::UnicodeUTF8));
-			label_height_Max->setText(QApplication::translate("Form", "1000", 0, QApplication::UnicodeUTF8));
+            groupBox_camera->setTitle(QApplication::translate("parent", "Camera", 0));
+            label_elevation->setText(QApplication::translate("parent", "Elevation:", 0));
+            label_azimuth->setText(QApplication::translate("parent", "Azimuth:", 0));
+            label_strafe->setText(QApplication::translate("parent", "Strafe", 0));
+            label_strafeX->setText(QApplication::translate("parent", "X:", 0));
+            label_strafeY->setText(QApplication::translate("parent", "Y:", 0));
+            label_strafeZ->setText(QApplication::translate("parent", "Z:", 0));
+            label_distanceMin->setText(QApplication::translate("parent", "0", 0));
+            label_dinstanceMax->setText(QApplication::translate("parent", "5000", 0));
+            label_distance->setText(QApplication::translate("parent", "Distance:", 0));
+            checkBox_orthographic->setText(QApplication::translate("parent", "Use Orthographic", 0));
+            groupBox_sections->setTitle(QApplication::translate("parent", "Sections", 0));
+            pushButton_xPlane0->setText(QApplication::translate("parent", "PX", 0));
+            pushButton_yPlane0->setText(QApplication::translate("parent", "PY", 0));
+            pushButton_zPlane0->setText(QApplication::translate("parent", "PZ", 0));
+            checkBox_useSections->setText(QApplication::translate("parent", "Use Sections", 0));
+            checkBox_limitedBB->setText(QApplication::translate("parent", "Limited by bounding box", 0));
+            label_sectionsBase->setText(QApplication::translate("Form", "   Base: ", 0));
+            label_sectionsDistance->setText(QApplication::translate("Form", "  Distance: ", 0));
+            label_originY->setText(QApplication::translate("Form", "   Origin X:", 0));
+            label_originX->setText(QApplication::translate("Form", "Origin Y:", 0));
+            label_originZ->setText(QApplication::translate("Form", "Origin Z:", 0));
+            label_xPlaneMin_Min->setText(QApplication::translate("parent", "-5000", 0));
+            label_xPlaneMin_Max->setText(QApplication::translate("parent", "5000", 0));
+            label_xPlaneMax_Min->setText(QApplication::translate("parent", "-5000", 0));
+            label_xPlaneMax_Max->setText(QApplication::translate("parent", "5000", 0));
+            label_yPlaneMin_Min->setText(QApplication::translate("parent", "-5000", 0));
+            label_yPlaneMin_Max->setText(QApplication::translate("parent", "5000", 0));
+            label_yPlaneMax_Min->setText(QApplication::translate("parent", "-5000", 0));
+            label_yPlaneMax_Max->setText(QApplication::translate("parent", "5000", 0));
+            label_zPlaneMin_Min->setText(QApplication::translate("parent", "-5000", 0));
+            label_zPlaneMin_Max->setText(QApplication::translate("parent", "5000", 0));
+            label_zPlaneMax_Min->setText(QApplication::translate("parent", "-5000", 0));
+            label_zPlaneMax_Max->setText(QApplication::translate("parent", "5000", 0));
+            pushButton_xPlaneMin->setText(QApplication::translate("parent", "X Min", 0));
+            pushButton_xPlaneMax->setText(QApplication::translate("parent", "X Max", 0));
+            pushButton_yPlaneMin->setText(QApplication::translate("parent", "Y Min", 0));
+            pushButton_yPlaneMax->setText(QApplication::translate("parent", "Y Max", 0));
+            pushButton_zPlaneMin->setText(QApplication::translate("parent", "Z Min", 0));
+            pushButton_zPlaneMax->setText(QApplication::translate("parent", "Z Max", 0));
+            label_angleMax->setText(QApplication::translate("Form", "   Angle Max", 0));
+            label_angleMin_Min->setText(QApplication::translate("Form", "-360", 0));
+            label_angleMin_Max->setText(QApplication::translate("Form", "360", 0));
+            label_angleMin->setText(QApplication::translate("Form", "   Angle Min", 0));
+            label_AngleMax_Min->setText(QApplication::translate("Form", "-360", 0));
+            label_angleMax_Max->setText(QApplication::translate("Form", "360", 0));
+            label_radius->setText(QApplication::translate("Form", "   Radius", 0));
+            label_radius_Min->setText(QApplication::translate("Form", "0", 0));
+            label_radius_Max->setText(QApplication::translate("Form", "1000", 0));
+            label_strafeSections->setText(QApplication::translate("Form", "   Strafe", 0));
+            label_strafeXSections->setText(QApplication::translate("Form", "X:", 0));
+            label_strafeYSections->setText(QApplication::translate("Form", "Y:", 0));
+            label_strafeZSections->setText(QApplication::translate("Form", "Z:", 0));
+            checkBox_usePiece->setText(QApplication::translate("Form", "Piece", 0));
+            radioButton_XY->setText(QApplication::translate("Form", "XY", 0));
+            radioButton_YZ->setText(QApplication::translate("Form", "YZ", 0));
+            radioButton_XZ->setText(QApplication::translate("Form", "XZ", 0));
+            label_height->setText(QApplication::translate("Form", "   Height", 0));
+            label_height_Min->setText(QApplication::translate("Form", "0", 0));
+            label_height_Max->setText(QApplication::translate("Form", "1000", 0));
 		} // retranslateUi
 
 
