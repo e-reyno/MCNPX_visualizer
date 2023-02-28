@@ -485,7 +485,7 @@ void MCNPXVisualizer::createStatusBar()
 								 tr("Open File"), QString::fromStdString(Config::getSingleton().MCNPX), tr("MCNPX (*.txt *.pov *.*)"));
 	if (fileName != "")
 	{
-		std::cout << "Opening " << fileName.toStdString().c_str() << "..." << std::endl;
+        std::cout << "Opening test: " << fileName.toStdString().c_str() << "..." << std::endl;
 		openFile(fileName); // actually open the mcnpx file
 	}
 		

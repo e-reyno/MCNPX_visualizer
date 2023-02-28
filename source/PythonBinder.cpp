@@ -24,7 +24,7 @@ PythonBinder::PythonBinder()
 	_process = new QProcess(this);
 	_process->setWorkingDirectory (QString::fromStdString(Config::getSingleton().PYTHON) );
 
-	connect(_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished( int, QProcess::ExitStatus)));
+    connect(_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished(int, QProcess::ExitStatus)));
 	connect(_process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
 	connect(_process, SIGNAL(started()), this, SLOT(started()));
 	connect(_process, SIGNAL(stateChanged(QProcess::ProcessState newState)), this, SLOT(stateChanged(QProcess::ProcessState newState)));
