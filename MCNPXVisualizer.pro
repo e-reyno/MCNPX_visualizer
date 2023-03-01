@@ -11,6 +11,8 @@ TEMPLATE = app
 TARGET = MCNPXVisualizer
 INCLUDEPATH += source
 DEPENDPATH += source
+INCLUDEPATH += python
+DEPENDPATH += python
 CONFIG += c++11
 LIBS += -lopengl32
 LIBS += -lglu32
@@ -52,3 +54,20 @@ SOURCES += source/CameraManager.cpp \
 	   source/SceneDrawer.cpp \
 	   source/OpenGLSphere.cpp \
 	   source/main.cpp
+
+DISTFILES += \
+    python/BoundingBox.py \
+    python/CellCard.py \
+    python/Color.py \
+    python/DataCard.py \
+    python/DataHolder.py \
+    python/MCNPXCellParser.py \
+    python/MCNPXParser.py \
+    python/MCNPXPreParser.py \
+    python/MCNPXPreProcess.py \
+    python/MCNPXtoPOV.py \
+    python/Rotation.py \
+    python/SurfaceCard.py \
+    python/Translation.py \
+    python/container.py \
+    python/povray.py

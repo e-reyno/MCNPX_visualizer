@@ -29,9 +29,9 @@ PovRayRenderer::PovRayRenderer(QString povFile, QString initFile)
 	_process.setWorkingDirectory(QString::fromStdString(Config::getSingleton().POVRAY) );
 
 	connect(&_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished( int, QProcess::ExitStatus)));
-	connect(&_process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
+    connect(&_process, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
 	connect(&_process, SIGNAL(started()), this, SLOT(started()));
-	connect(&_process, SIGNAL(stateChanged(QProcess::ProcessState newState)), this, SLOT(stateChanged(QProcess::ProcessState newState)));
+    //connect(&_process, SIGNAL(stateChanged(QProcess::ProcessState newState)), this, SLOT(stateChanged(QProcess::ProcessState newState)));
 
 	// Call-back for the standard output of the subprocess
 	connect(&_process, SIGNAL(readyReadStandardOutput()),this, SLOT(displayOutputMsg()));

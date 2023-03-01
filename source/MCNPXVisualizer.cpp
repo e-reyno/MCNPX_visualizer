@@ -276,14 +276,14 @@ void MCNPXVisualizer::createDockWidgets()
 	connect(UiMCNPXScene.sceneDrawer, SIGNAL(cameraPositionChanged(float,float,float)), CameraManager::getSingletonPtr()->getCamera(), SLOT(onCameraPositionChanged(float,float,float)));
 	connect(UiMCNPXScene.sceneDrawer, SIGNAL(cameraLookAtChanged(float,float,float)), CameraManager::getSingletonPtr()->getCamera(), SLOT(onCameraLookAtChanged(float,float,float)));
 	connect(UiMCNPXScene.sceneDrawer, SIGNAL(cameraStrafeChanged(float,float,float)), CameraManager::getSingletonPtr()->getCamera(), SLOT(onCameraStrafeChanged(float,float,float)));
-	connect(UiMCNPXScene.sceneDrawer, SIGNAL(zPlaneMinChanged(float)), CameraManager::getSingletonPtr()->getSections(), SLOT(onZPlaneMinChanged(float)));
-	connect(UiMCNPXScene.sceneDrawer, SIGNAL(zPlaneMaxChanged(float)), CameraManager::getSingletonPtr()->getSections(), SLOT(onZPlaneMaxChanged(float)));
-	connect(UiMCNPXScene.sceneDrawer, SIGNAL(xPlaneMinChanged(float)), CameraManager::getSingletonPtr()->getSections(), SLOT(onXPlaneMinChanged(float)));
-	connect(UiMCNPXScene.sceneDrawer, SIGNAL(xPlaneMaxChanged(float)), CameraManager::getSingletonPtr()->getSections(), SLOT(onXPlaneMaxChanged(float)));
-	connect(UiMCNPXScene.sceneDrawer, SIGNAL(yPlaneMinChanged(float)), CameraManager::getSingletonPtr()->getSections(), SLOT(onYPlaneMinChanged(float)));
-	connect(UiMCNPXScene.sceneDrawer, SIGNAL(yPlaneMaxChanged(float)), CameraManager::getSingletonPtr()->getSections(), SLOT(onYPlaneMaxChanged(float)));
+    //connect(UiMCNPXScene.sceneDrawer, SIGNAL(zPlaneMinChanged(double)), CameraManager::getSingletonPtr()->getSections(), SLOT(onZPlaneMinChanged(double)));
+    //connect(UiMCNPXScene.sceneDrawer, SIGNAL(zPlaneMaxChanged(double)), CameraManager::getSingletonPtr()->getSections(), SLOT(onZPlaneMaxChanged(double)));
+    //connect(UiMCNPXScene.sceneDrawer, SIGNAL(xPlaneMinChanged(double)), CameraManager::getSingletonPtr()->getSections(), SLOT(onXPlaneMinChanged(double)));
+    //connect(UiMCNPXScene.sceneDrawer, SIGNAL(xPlaneMaxChanged(double)), CameraManager::getSingletonPtr()->getSections(), SLOT(onXPlaneMaxChanged(double)));
+    //connect(UiMCNPXScene.sceneDrawer, SIGNAL(yPlaneMinChanged(double)), CameraManager::getSingletonPtr()->getSections(), SLOT(onYPlaneMinChanged(double)));
+    //connect(UiMCNPXScene.sceneDrawer, SIGNAL(yPlaneMaxChanged(double)), CameraManager::getSingletonPtr()->getSections(), SLOT(onYPlaneMaxChanged(double)));
 
-	connect(this->UiMCNPXScene.sceneDrawer, SIGNAL(statusChanged(QString, int)), this, SLOT(statusBarChanged(QString, int)));
+    connect(this->UiMCNPXScene.sceneDrawer, SIGNAL(statusChanged(QString, int)), this, SLOT(statusBarChanged(QString, int)));
 	
 	connect(this->UiMCNPXScene.sceneDrawer, SIGNAL(informationChanged()), this, SLOT(onSceneInformationChanged()));
 }
@@ -1798,7 +1798,7 @@ void MCNPXVisualizer::finishedParsing(QString method)
 		QFile fileUniverse(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_universes");
 		if (!fileUniverse.open(QFile::ReadOnly | QFile::Text))
 		{
-			std::cout << "ERROR (finishedParsing) => couldn't open universes file" << std::endl;
+            std::cout << "\n fileuniverse: ERROR (finishedParsing) => couldn't open universes file" << std::endl;
 			return ;
 		}
 		QTextStream inUniverse(&fileUniverse);
@@ -1811,7 +1811,7 @@ void MCNPXVisualizer::finishedParsing(QString method)
 			{
 				QString universe = list.at(0);
 				list.pop_front();
-				//this->UiUniverses.addUniverse(universe, list);
+                this->UiUniverses.addUniverse(universe, list);
 			}
 		} 
 		fileUniverse.close();
@@ -1841,7 +1841,7 @@ void MCNPXVisualizer::finishedParsing(QString method)
 		QFile fileImportance(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_importance");
 		if (!fileImportance.open(QFile::ReadOnly | QFile::Text))
 		{
-			std::cout << "ERROR (finishedParsing) => couldn't open universes file" << std::endl;
+            std::cout << "fileimportance: ERROR (finishedParsing) => couldn't open universes file" << std::endl;
 			return ;
 		}
 		QTextStream inImportance(&fileImportance);
@@ -2185,9 +2185,10 @@ void MCNPXVisualizer::loadStandardColors()
 {
 	_colorMap.clear();
 	QFile file(QString::fromStdString(Config::getSingleton().DATA) + "randomColors.txt");
+    std::cout << (Config::getSingleton().DATA) + "randomColors.txt";
 	if (!file.open(QFile::ReadOnly | QFile::Text))
 	{
-		std::cout << "ERROR (finishedParsing) => couldn't open universes file" << std::endl;
+        std::cout << " load standard colors: ERROR (finishedParsing) => couldn't open universes file" << std::endl;
 		return ;
 	}
 

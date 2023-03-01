@@ -22,12 +22,14 @@
 PythonBinder::PythonBinder()
 {
 	_process = new QProcess(this);
+    std::cout << Config::getSingleton().PYTHON;
+    std::cout << std::endl;
 	_process->setWorkingDirectory (QString::fromStdString(Config::getSingleton().PYTHON) );
 
     connect(_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished(int, QProcess::ExitStatus)));
-	connect(_process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
+    connect(_process, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
 	connect(_process, SIGNAL(started()), this, SLOT(started()));
-	connect(_process, SIGNAL(stateChanged(QProcess::ProcessState newState)), this, SLOT(stateChanged(QProcess::ProcessState newState)));
+    //connect(_process, SIGNAL(stateChanged(QProcess::ProcessState newState)), this, SLOT(stateChanged(QProcess::ProcessState newState)));
 	connect(_process, SIGNAL(readyReadStandardOutput()),this, SLOT(displayOutputMsg()));
 	connect(_process, SIGNAL(readyReadStandardError()),this, SLOT(displayErrorMsg()));
 }
@@ -38,9 +40,9 @@ PythonBinder::PythonBinder()
 PythonBinder::~PythonBinder()
 {
 	disconnect(_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished( int, QProcess::ExitStatus)));
-	disconnect(_process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
+    disconnect(_process, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
 	disconnect(_process, SIGNAL(started()), this, SLOT(started()));
-	disconnect(_process, SIGNAL(stateChanged(QProcess::ProcessState newState)), this, SLOT(stateChanged(QProcess::ProcessState newState)));
+    //disconnect(_process, SIGNAL(stateChanged(QProcess::ProcessState newState)), this, SLOT(stateChanged(QProcess::ProcessState newState)));
 	disconnect(_process, SIGNAL(readyReadStandardOutput()),this, SLOT(displayOutputMsg()));
 	disconnect(_process, SIGNAL(readyReadStandardError()),this, SLOT(displayErrorMsg()));
 
