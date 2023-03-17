@@ -10,10 +10,10 @@
 import sys, os
 from math import sqrt, sin, cos, pi
 
-# 
+#
 
 class File:
-  def __init__(self,fnam="out.pov",*items):
+  def __init__(self,fnam="out.pov", *items):
     self.file = open(fnam,"w")
     self.__indent = 0
     self.write(*items)
@@ -35,19 +35,21 @@ class File:
       # blank line if this is a top level end
       self.writeln( )
   def write(self,*items):
+    #print(" new item \n")
     for item in items:
-      
+      #print(item)
       if type(item) == str:
         self.include(item)
       else:
         if (item.getType() == "Instance"):
+          #print("instance")
           item.writeInstance(self)
         elif (item.getType() == "Declare"):
+          #print("declaration")
           item.writeDeclare(self)
         else:
           item.write(self)
   def writeln(self,s=""):
-    #print "  "*self.__indent+s
     self.file.write("  "*self.__indent+s+os.linesep)
 
 class Vector:
