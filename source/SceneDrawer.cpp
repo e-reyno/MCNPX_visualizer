@@ -920,9 +920,9 @@ void SceneDrawer::wheelEvent(QWheelEvent *event)
     int numDegrees = event->angleDelta().y() / 8;
     float numSteps = numDegrees / 15.0;
 
-    if (event->angleDelta().y() > 0)
+    if (event->angleDelta().y() < 0){
         this->setDistance(_distance + numSteps *(0.1)*_distance);
-
+    }
 	// Update the statusbar information
 	QString status = QString("Azimuth: %1, Elevation: %2, Distance: %3, StrafeX: %4, StrafeY: %5, StrafeZ: %6").arg(_azimuth, 8, 'f', 3).arg(_elevation, 8, 'f', 3).arg(_distance, 8, 'f', 3).arg(_camStrafeX, 8, 'f', 3).arg(_camStrafeY, 8, 'f', 3).arg(_camStrafeZ, 8, 'f', 3);
 	emit statusChanged(status, 0);	
