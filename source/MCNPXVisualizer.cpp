@@ -482,7 +482,7 @@ void MCNPXVisualizer::createStatusBar()
  void MCNPXVisualizer::open()
 {
 	QString fileName = QFileDialog::getOpenFileName(this,
-								 tr("Open File"), QString::fromStdString(Config::getSingleton().MCNPX), tr("MCNPX (*.txt *.pov *.*)"));
+                                 tr("Open File"), QString::fromStdString(Config::getSingleton().MCNPX), tr("MCNPX (*.txt *.pov *.*)"));
 	if (fileName != "")
 	{
         std::cout << "Opening test: " << fileName.toStdString().c_str() << "..." << std::endl;
@@ -655,7 +655,7 @@ void MCNPXVisualizer::setCurrentFile(const QString &fileName)
 	curFileExt = "";
 	curFileName = "";
 
-	QStringList list = curFile.split("/");
+   QStringList list = curFile.split("/");
 	QStringList list2 = list.last().split(".");
 	if (list2.count() == 1)
 		curFileName = list2.last();
@@ -666,9 +666,9 @@ void MCNPXVisualizer::setCurrentFile(const QString &fileName)
 		curFileName = list2.join(".");
 	}
 	list.pop_back();
-	curFilePath = list.join("/") + "/";
+    curFilePath = list.join("/") + "/";
 	
-	setWindowTitle(tr("%1[*] - %2").arg(curFile).arg(tr("MCNPX Visualizer")));
+    setWindowTitle(tr("%1[*] - %2").arg(curFile, (tr("MCNPX Visualizer"))));
 }
 
 
@@ -815,7 +815,7 @@ void MCNPXVisualizer::onCommand()
 		_extentV = 100.0;
 		extentChanged = true;
 	}
-	if (extentChanged)
+    if (extentChanged)
 	{
         UiMCNPXSceneEditor.sectionDistance->setValue(std::max(_extentH, _extentV));
 		statusBar()->showMessage(QString("Set extent to eh=%1, ev=%2.")
@@ -827,7 +827,7 @@ void MCNPXVisualizer::onCommand()
 
 	QRegExp reOrigin1("ORIGIN\\s+([-\\d.]+)\\s+([-\\d.]+)\\s+([-\\d.]+)", Qt::CaseInsensitive);
 	QRegExp reOrigin2("ORIGIN\\s+([-\\d.]+)\\s+([-\\d.]+)", Qt::CaseInsensitive);
-	QRegExp reOrigin3("ORIGIN\\s+([-\\d.]+)", Qt::CaseInsensitive);
+    QRegExp reOrigin3("ORIGIN\\s+([-\\d.]+)", Qt::CaseInsensitive);
 	QRegExp reOrigin4("ORIGIN", Qt::CaseInsensitive);
 
 	bool originChanged = false;
@@ -1653,15 +1653,18 @@ void MCNPXVisualizer::preparse()
 	this->UiMCNPXScene.sceneDrawer->clearScene();
 
 	// Prepare the command line commando for the preparser
-	QStringList args;
-	args.push_back(curFile);
-	std::cout << QString("\"" + curFile + "\"").toStdString().c_str() << std::endl; 
-	args.push_back(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_surfaces");
-	args.push_back(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_cells");
-	args.push_back(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_universes");
-	args.push_back(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_importance" );
-	args.push_back(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_materials" );
-	args.push_back(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_cellTree" );
+    QStringList args;
+    QString current_file = "C:\\Users\\sfs81547\\Documents\\MCNPX_Visualizer\\data\\bunker_dt";
+    args.push_back(current_file);
+    std::cout << QString("\"" + curFile + "\"").toStdString().c_str() << std::endl;
+    std::cout << "current file name \n";
+    std::cout << curFileName.toStdString() << std::endl;
+    args.push_back(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_surfaces");
+    args.push_back(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_cells");
+    args.push_back(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_universes");
+    args.push_back(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_importance" );
+    args.push_back(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_materials" );
+    args.push_back(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_cellTree" );
 
 	// Debug info for the output window
 	QString output = "<br /><br />Python MCNPXPreParser.py \"" + curFile + "\"";
@@ -1704,7 +1707,7 @@ void MCNPXVisualizer::onParse()
 	QString output = "<br /><br/>Python MCNPXtoPOV.py \"" + curFile + "\" \"" + QString::fromStdString(Config::getSingleton().TEMP) + "mcnpx.pov" + "\" \"" + QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_colorMap" + "\"<br/>";
 	writeText(textEditOutput, output, "0000ff");
 
-	// Start running the python method
+    // Start running thDIAMON-03_28.02.e python method
 	_pythonBinder->call("MCNPXtoPOV", args);
 }
 
@@ -1719,6 +1722,7 @@ void MCNPXVisualizer::finishedParsing(QString method)
 {
 	if (method == "MCNPXPreParser")
 	{
+       std::cout << " \n finished parsing \n ";
 		QString line;
 
 		// MATERIALS
@@ -2246,6 +2250,7 @@ void MCNPXVisualizer::loadStandardMaterials()
 
 	QString line;
 	QFile fileMaterials(QString::fromStdString(Config::getSingleton().DATA) + "materials.txt");
+    std::cout << ((Config::getSingleton().DATA) + "materials.txt \n");
 	if (!fileMaterials.open(QFile::ReadOnly | QFile::Text))
 	{
 		std::cout << "ERROR (loadStandardMaterials) => couldn't open materials file" << std::endl;
@@ -2289,6 +2294,7 @@ void MCNPXVisualizer::loadSavedMaterials()
 	_savedMaterials.clear(); // remove any earlier loaded color
 
     QString line;
+    std::cout << (Config::getSingleton().TEMP) + curFileName.toStdString() + "_colorMap \n ";
 	QFile fileMaterials(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_colorMap");
 	if (!fileMaterials.open(QFile::ReadOnly | QFile::Text))
 	{
@@ -2329,7 +2335,7 @@ void MCNPXVisualizer::createMaterials()
 	// and if the name is correctly specified in the mcnpx file
 
 	loadStandardMaterials();
-	loadSavedMaterials();
+    //loadSavedMaterials();
 
 	QString line;
 
@@ -2344,9 +2350,11 @@ void MCNPXVisualizer::createMaterials()
 
 	// First create all the found materials in the mxnpx file
 	QFile fileMaterials(QString::fromStdString(Config::getSingleton().TEMP) + curFileName + "_materials");
+    std::cout << std::endl;
+    std::cout << (Config::getSingleton().TEMP) + curFileName.toStdString() + "_materials";
 	if (!fileMaterials.open(QFile::ReadOnly | QFile::Text))
 	{
-		std::cout << "ERROR (finishedParsing) => couldn't open materials file" << std::endl;
+        std::cout << "ERROR (sing) => couldn't open materials file" << std::endl;
 		return ;
 	}
 	QTextStream inMaterials(&fileMaterials);

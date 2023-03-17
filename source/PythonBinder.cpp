@@ -29,7 +29,7 @@ PythonBinder::PythonBinder()
     connect(_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished(int, QProcess::ExitStatus)));
     connect(_process, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
 	connect(_process, SIGNAL(started()), this, SLOT(started()));
-    //connect(_process, SIGNAL(stateChanged(QProcess::ProcessState newState)), this, SLOT(stateChanged(QProcess::ProcessState newState)));
+    connect(_process, SIGNAL(stateChanged(QProcess::ProcessState newState)), this, SLOT(stateChanged(QProcess::ProcessState newState)));
 	connect(_process, SIGNAL(readyReadStandardOutput()),this, SLOT(displayOutputMsg()));
 	connect(_process, SIGNAL(readyReadStandardError()),this, SLOT(displayErrorMsg()));
 }
@@ -75,10 +75,12 @@ void PythonBinder::displayErrorMsg(){
 void PythonBinder::call(QString method, QStringList args)
 {	
 	_method = method;
-	QString PYTHON_PATH = "python";
+    //python path only set to python
+    QString PYTHON_PATH = "C:\\Users\\sfs81547\\OneDrive - Science and Technology Facilities Council\\Documents\\ISIS\\Diamon Project\\Code\\venv\\Scripts\\python.exe";
 	QStringList pythonArgs;
 	// Use the right directory of the python functions
-	QString pythonFile = QString::fromStdString(Config::getSingleton().PYTHON);
+    QString pythonFile = QString::fromStdString(Config::getSingleton().PYTHON);
+    std::cout << Config::getSingleton().PYTHON;
 	pythonFile = pythonFile + method + ".py";
 	pythonArgs.push_back(pythonFile);
 	for (int i=0; i<args.size(); i++)
@@ -87,6 +89,12 @@ void PythonBinder::call(QString method, QStringList args)
 	}
 	
 	_process->setReadChannel(QProcess::StandardOutput);
+    std::cout << PYTHON_PATH.toStdString();
+    for (int i=0; i < pythonArgs.size(); i++){
+        std::cout << "python arg: " + std::to_string(i) + "\n";
+        std::cout << pythonArgs[i].toStdString();
+        std::cout << std::endl;
+    }
 	_process->start(PYTHON_PATH, pythonArgs);
 }
 
