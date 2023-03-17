@@ -19,7 +19,6 @@
 #include <iostream>
 #include <fstream>
 
-using namespace std;
 
 class PythonBinder : public QObject
 {

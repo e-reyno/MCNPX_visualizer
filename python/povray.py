@@ -10,10 +10,10 @@
 import sys, os
 from math import sqrt, sin, cos, pi
 
-# 
+#
 
 class File:
-  def __init__(self,fnam="out.pov",*items):
+  def __init__(self,fnam="out.pov", *items):
     self.file = open(fnam,"w")
     self.__indent = 0
     self.write(*items)
@@ -35,19 +35,21 @@ class File:
       # blank line if this is a top level end
       self.writeln( )
   def write(self,*items):
+    #print(" new item \n")
     for item in items:
-      
+      #print(item)
       if type(item) == str:
         self.include(item)
       else:
         if (item.getType() == "Instance"):
+          #print("instance")
           item.writeInstance(self)
         elif (item.getType() == "Declare"):
+          #print("declaration")
           item.writeDeclare(self)
         else:
           item.write(self)
   def writeln(self,s=""):
-    #print "  "*self.__indent+s
     self.file.write("  "*self.__indent+s+os.linesep)
 
 class Vector:
@@ -96,7 +98,7 @@ class Item:
         file.writeln( str(opt) )
 
     #self.kwargs.items() = self.kwargs.items()    
-    for key in sorted(self.kwargs.iterkeys(), reverse=False):
+    for key in sorted(iter(self.kwargs.keys()), reverse=False):
       if type(self.kwargs[key])==tuple or type(self.kwargs[key])==list:
         val = Vector(*self.kwargs[key])
         file.writeln( "%s %s"%(key,val) )
@@ -117,7 +119,7 @@ class Item:
               opt.write(file)
           else:
             file.writeln( str(opt) )
-      for key,val in self.kwargs.items():
+      for key,val in list(self.kwargs.items()):
           if type(val)==tuple or type(val)==list:
             val = Vector(*val)
             file.writeln( "%s %s"%(key,val) )

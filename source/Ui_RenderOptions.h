@@ -14,7 +14,7 @@
 #define UI_RENDEROPTIONS_H
 
 #include <QMainWindow>
-#include <QtGui>
+#include <QtWidgets>
 #include <QPixmap>
 #include <QPrinter>
 #include <QTextEdit>
@@ -65,19 +65,19 @@ class Ui_RenderOptions : public QObject
 			qualityComboBox->setGeometry(QRect(0, 0, 60, 20));
 			qualityComboBox->clear();
 			qualityComboBox->insertItems(0, QStringList()
-				<< QApplication::translate("Form", "0", 0, QApplication::UnicodeUTF8)
-				<< QApplication::translate("Form", "1", 0, QApplication::UnicodeUTF8)
-				<< QApplication::translate("Form", "2", 0, QApplication::UnicodeUTF8)
-				<< QApplication::translate("Form", "3", 0, QApplication::UnicodeUTF8)
-				<< QApplication::translate("Form", "4", 0, QApplication::UnicodeUTF8)
-				<< QApplication::translate("Form", "5", 0, QApplication::UnicodeUTF8)
-				<< QApplication::translate("Form", "6", 0, QApplication::UnicodeUTF8)
-				<< QApplication::translate("Form", "7", 0, QApplication::UnicodeUTF8)
-				<< QApplication::translate("Form", "8", 0, QApplication::UnicodeUTF8)
-				<< QApplication::translate("Form", "9", 0, QApplication::UnicodeUTF8)
-				<< QApplication::translate("Form", "10", 0, QApplication::UnicodeUTF8)
-				<< QApplication::translate("Form", "11", 0, QApplication::UnicodeUTF8)
-				<< QApplication::translate("Form", "12", 0, QApplication::UnicodeUTF8)
+                << QApplication::translate("Form", "0", 0)
+                << QApplication::translate("Form", "1", 0)
+                << QApplication::translate("Form", "2", 0)
+                << QApplication::translate("Form", "3", 0)
+                << QApplication::translate("Form", "4", 0)
+                << QApplication::translate("Form", "5", 0)
+                << QApplication::translate("Form", "6", 0)
+                << QApplication::translate("Form", "7", 0)
+                << QApplication::translate("Form", "8", 0)
+                << QApplication::translate("Form", "9", 0)
+                << QApplication::translate("Form", "10", 0)
+                << QApplication::translate("Form", "11", 0)
+                << QApplication::translate("Form", "12", 0)
 			 );
 			qualityComboBox->setCurrentIndex(1);
 

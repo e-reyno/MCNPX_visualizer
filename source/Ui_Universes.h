@@ -32,7 +32,8 @@
 #include <QVBoxLayout>
 #include <QTreeWidget>
 #include <QStringList>
-
+#include <QPushButton>
+#include <QRegExp>
 #include <iostream>
 
 #include "Cell.h"
@@ -105,7 +106,7 @@ class Ui_Universes : public QObject
 							item->setIcon(0, QIcon(pix));
 							treeStack[depth] = item;
 						}
-						//std::cout << depth << ", " << cell << ", " << universe  << std::endl;
+                        std::cout << depth << ", " << cell << ", " << universe  << std::endl;
 					}
 					else
 						std::cout << "ERROR (Ui_Universes::createTree): format of the input cell tree file is wrong." << std::endl;

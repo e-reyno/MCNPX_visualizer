@@ -27,15 +27,21 @@ class Config : public Singleton<Config>
 	public:
 	Config()
 	{
-	#ifdef _WIN32 || _WIN64
-		
-		std::cout << QDir::root().currentPath().toStdString() << std::endl;
-		TEMP = QDir::root().currentPath().append( "/temp/").replace("/", "\\").toStdString();
-        PYTHON = QDir::root().currentPath().append( "/python/").replace("/", "\\").toStdString();
-        MCNPX = QDir::root().currentPath().append( "/mcnpx/").replace("/", "\\").toStdString();
-		POVRAY = QDir::root().currentPath().append( "/povray/").replace("/", "\\").toStdString();
-		DATA =  QDir::root().currentPath().append( "/data/").replace("/", "\\").toStdString();
-		IMAGES =  QDir::root().currentPath().append( "/images/").replace("/", "\\").toStdString();
+    #if defined(_WIN32) || defined(_WIN64_)
+
+        TEMP = QDir::root().absoluteFilePath("C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer").append( "/temp/").replace("/", "\\").toStdString();
+        PYTHON = QDir::root().absoluteFilePath("C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer").append( "/python/").replace("/", "\\").toStdString();
+        MCNPX = QDir::root().absoluteFilePath("C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer").append( "/mcnpx/").replace("/", "\\").toStdString();
+        POVRAY = QDir::root().absoluteFilePath("C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer").append( "/povray/").replace("/", "\\").toStdString();
+        DATA =  QDir::root().absoluteFilePath("C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer").append( "/data/").replace("/", "\\").toStdString();
+        IMAGES =  QDir::root().absoluteFilePath("C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer").append( "/images/").replace("/", "\\").toStdString();
+
+        //TEMP = QDir::root().currentPath().append( "/temp/").replace("/", "\\").toStdString();
+        //PYTHON = QDir::root().currentPath().append( "/python/").replace("/", "\\").toStdString();
+        //MCNPX = QDir::root().currentPath().append( "/mcnpx/").replace("/", "\\").toStdString();
+        //POVRAY = QDir::root().currentPath().append( "/povray/").replace("/", "\\").toStdString();
+        //DATA =  QDir::root().currentPath().append( "/data/").replace("/", "\\").toStdString();
+        //IMAGES =  QDir::root().currentPath().append( "/images/").replace("/", "\\").toStdString();
 
 	/*	TEMP = "D:\\UHasselt\\2e Master\\Stage\\SVN\\temp\\";
 		PYTHON = "D:\\UHasselt\\2e Master\\Stage\\SVN\\python\\MCNPXToPOV\\src\\";

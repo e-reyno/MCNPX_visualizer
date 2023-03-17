@@ -11,9 +11,10 @@
 
 #ifndef POV_RAY_RENDERER_H
 #define POV_RAY_RENDERER_H
-
+#include <QRegExp>
 #include <QString>
 #include <QProcess>
+#include <QRegularExpression>
 #include <QTimer>
 
 // Contains all the basis rendering information and state

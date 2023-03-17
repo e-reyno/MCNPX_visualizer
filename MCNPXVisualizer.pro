@@ -1,13 +1,21 @@
 CONFIG += qt
-QT += opengl
-QT += qt3support
+QT += printsupport
+QT += openglwidgets
+QT += widgets
+QT += core5compat
+QT += gui
 
+QT += core gui sql printsupport
+DEFINES += "_HAS_STD_BYTE=0"
 TEMPLATE = app
 TARGET = MCNPXVisualizer
-
 INCLUDEPATH += source
 DEPENDPATH += source
-
+INCLUDEPATH += python
+DEPENDPATH += python
+CONFIG += c++11
+LIBS += -lopengl32
+LIBS += -lglu32
 
 # Input
 HEADERS += source/Camera.h \
@@ -46,3 +54,20 @@ SOURCES += source/CameraManager.cpp \
 	   source/SceneDrawer.cpp \
 	   source/OpenGLSphere.cpp \
 	   source/main.cpp
+
+DISTFILES += \
+    python/BoundingBox.py \
+    python/CellCard.py \
+    python/Color.py \
+    python/DataCard.py \
+    python/DataHolder.py \
+    python/MCNPXCellParser.py \
+    python/MCNPXParser.py \
+    python/MCNPXPreParser.py \
+    python/MCNPXPreProcess.py \
+    python/MCNPXtoPOV.py \
+    python/Rotation.py \
+    python/SurfaceCard.py \
+    python/Translation.py \
+    python/container.py \
+    python/povray.py

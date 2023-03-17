@@ -17,20 +17,22 @@ class MCNPXPreProcess:
    self.filedata = []
    self.filedataWithComments = []
    for line in open(filename).readlines():
-     #print 'line: ' + line
+     #print('line: ' + line)
+     #replace tab with 4 space
      line = line.replace('\t', "     ")
-     s = re.match(r"read.+file[\s=](\S+)", line, re.IGNORECASE|
-re.DOTALL)
+     #ignore case and dotall matches newline character
+     s = re.match(r"read.+file[\s=](\S+)", line, re.IGNORECASE|re.DOTALL)
+     # s is none for bunker dt
      if s:
-       self.filedata.extend(open(s.groups()[0]).readlines() );
-       self.filedataWithComments.extend(open(s.groups()[0]).readlines() );
-       print "Including file %s" % s.groups()[0]
+       self.filedata.extend(open(s.groups()[0]).readlines() )
+       self.filedataWithComments.extend(open(s.groups()[0]).readlines() )
+       print("Including file %s" % s.groups()[0])
      else:
-       self.filedata.append(line);
-       self.filedataWithComments.append(line);
+       self.filedata.append(line)
+       self.filedataWithComments.append(line)
    #remove all comments on non-empty lines for easier parsing.
    for i,line in enumerate(self.filedata):
-     #print str(i) + " => " + line
+
      s = re.match("(.*?)(\W\$\s*.*)|(\W[c]\s+.*)|(\W[C]\s+.*)", line, re.IGNORECASE|
 re.DOTALL)
      if s:
@@ -88,6 +90,7 @@ re.DOTALL)
    splitAtWithComments = []
 
    for i, line in enumerate(self.filedata):
+       #return match where string returns whitespace
        s = re.match(r"^\s*$", line)
        if s:
          splitAt.append(i)
@@ -97,15 +100,18 @@ re.DOTALL)
          splitAtWithComments.append(i)
     
    if len(splitAt) == 3:
+
      self.messageBlock = self.filedata[0:splitAt[0]]
      self.cellBlock = self.filedata[splitAt[0]+1:splitAt[1]]
      self.surfaceBlock = self.filedata[splitAt[1]+1:splitAt[2]]
      self.dataBlock = self.filedata[splitAt[2]+1:]
+
      self.messageBlockWithComments = self.filedataWithComments[0:splitAtWithComments[0]]
      self.cellBlockWithComments = self.filedataWithComments[splitAtWithComments[0]+1:splitAtWithComments[1]]
      self.surfaceBlockWithComments = self.filedataWithComments[splitAtWithComments[1]+1:splitAtWithComments[2]]
      self.dataBlockWithComments = self.filedataWithComments[splitAtWithComments[2]+1:]
    if len(splitAt) == 2:
+     print("2")
      self.messageBlock = []
      self.cellBlock = self.filedata[0:splitAt[0]]
      self.surfaceBlock = self.filedata[splitAt[0]+1:splitAt[1]]

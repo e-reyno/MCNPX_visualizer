@@ -14,8 +14,8 @@
 
 #include <QString>
 #include <QStringList>
-#include <QGLWidget>
-
+#include <QOpenGLWidget>
+#include <GL/glu.h>
 #include "OpenGLObject.h"
 
 #define DIRECTIONX 0
