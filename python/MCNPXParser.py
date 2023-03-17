@@ -59,7 +59,7 @@ class MCNPXParser:
         self.outputFile = outputFile
         self.colorMapFile = colorMapFile
         
-        self.cellCards = {}                 # contains all the different surface cards
+        self.cellCards = {}                 # contains all the different cell cards
         self.surfaceCards = {}              # contains all the different surface cards
         self.dataCards = {}                 # contains all the different data cards
         self.universes = {}                 # group all cells of the different universes
@@ -94,7 +94,7 @@ class MCNPXParser:
     # Close the parser
     #------------------------------------------------------------------------------------------------------------------
     def close(self):
-        pass;
+        pass
 
     # ==> preProcess()
     # Initialize the parser
@@ -112,7 +112,7 @@ class MCNPXParser:
         self.surfaceBlock = pre.surfaceBlock    # preliminary unparsed surfaces block
         self.dataBlock = pre.dataBlock          # preliminary unparsed data block
         self.dataBlockComments = pre.dataBlockWithComments          # preliminary unparsed data block (with comments)
-            
+        #print(self.colorMapFile)
         # read in the given colorMapFile
         # map a material on a "Color" object
         if (self.colorMapFile):
@@ -156,13 +156,13 @@ class MCNPXParser:
         if e:
             self.title = e.groupdict()['title']
             beginPos = 1
-    
-                
-                
+        i = 0
         for lineNr in range(beginPos, len(self.cellBlock)):
             
             line = self.cellBlock[lineNr]
-            #print line
+            i +=1
+            #print("line number " + str(i) + "\n")
+            #print(line)
 
             cellCard = re.split('[\s]+', line) 
             container.Container.remove_values_from_list(cellCard, '')
@@ -172,6 +172,8 @@ class MCNPXParser:
             
             # check if the form is of the second type (LIKE)
             likeCell = re.findall('(?<=like )[\d]+(?= BUT)', line, flags=re.IGNORECASE)
+            #print("check form is type like: \n")
+            #print(likeCell)
             if (  len(likeCell) == 1 ):
                 likeCell = likeCell[0] # likeCell is the reference cell number
                 likeParams = re.findall('(?<=but)[\d,\D,\s]+', line, flags=re.IGNORECASE)
@@ -217,7 +219,7 @@ class MCNPXParser:
                     geometryStartPosition = 3
                 else:
                     # density is not specified
-                    card.d = 0;
+                    card.d = 0
                     geometryStartPosition = 2
                     pass
                 # Read in the geometry and params
@@ -226,13 +228,14 @@ class MCNPXParser:
                 card.geometry = []
                 card.paramsData = []
                 parametersStarted = False
-
                 for n in range(geometryStartPosition, len(cellCard)):
                     if (re.match("^[a-z,\*]+[.]*", cellCard[n], flags=re.IGNORECASE) or parametersStarted):
                         # start/continue reading parameters
                         if (parametersStarted == False):
                             parametersStarted = True
+
                         card.paramsData.append(cellCard[n])
+                        print(card.paramsData)
                     else:
                         # reading geometry
                         card.geometry.append(cellCard[n])
@@ -241,7 +244,7 @@ class MCNPXParser:
                 card.parseParameters()
 
                 # if the cell card is part of a universe, add it
-                if ('U' in card.params):
+                if (card.params['U']):
                     if (card.params['U'] in self.universes):
                         self.universes[card.params['U']].append(card.number)
                     else:
@@ -377,7 +380,8 @@ class MCNPXParser:
             dh = DataHolder()
             #if (card.params["IMP"] == "n=0" or card.params["IMP"] == "N=0"):
             if ("IMP" in card.params):
-                if (dh.set(re.match('[\w,\s]*n[\w,\s]*=[\s]*0', card.params["IMP"] ,flags=re.IGNORECASE))):
+                if (dh.set(re.match(r'[\w,\s]*n[\w,\s]*=[\s]*0', card.params["IMP"] ,flags=re.IGNORECASE))):
+                    print("found n=0")
                     continue
             
             # IMPORTANT: CELLS ARE ONLY RENDERED WHEN THEY AREN'T UNIVERSES OR IF THEIR UNIVERSE IS DRAWN FROM A PARENT CELL
@@ -1253,7 +1257,6 @@ class MCNPXParser:
             bbExists = False
         
         if (bbExists):  
-            print("jaja")
             print(card)
             box = self.getBoundingBoxOfGeometry(surface)
             # copy the bounding box in bb
@@ -1977,9 +1980,10 @@ class MCNPXParser:
         
         # store the previous commentary line in this variable (used for seeking the name of a material
         previousCommentaryLine = None
-
+        print("data block comments:" + str(self.dataBlockComments))
         # read all data cards out of file and put them in surfaceCards
         for line in self.dataBlockComments:
+            print(line)
             dh = DataHolder()
 
             # see if the current line is a commentary line
@@ -2105,11 +2109,16 @@ class MCNPXParser:
     #------------------------------------------------------------------------------------------------------------------ 
     def getImpZeroCellCard(self):
         found = []
+        
         for card in self.cellCards:
-            #print self.cellCards[card].params
+            print("printing cell card: \n")
+            print(self.cellCards[card].params)
             if ("IMP" in self.cellCards[card].params):
+
+                #print(self.cellCards[card])
                 dh = DataHolder()
-                if (dh.set(re.match('[\w,\s]*n[\w,\s]*=[\s]*0', self.cellCards[card].params["IMP"] ,flags=re.IGNORECASE))):
+                #print(self.cellCards[card].params["IMP"])
+                if (dh.set(re.match(r'[\w,\s]*n[\w,\s]*=[\s]*0', self.cellCards[card].params["IMP"] ,flags=re.IGNORECASE))):
                     found.append(self.cellCards[card])
         if (len(found) > 1):
             print("WARNING: Too much cellcards with imp:n=0")
@@ -2146,7 +2155,6 @@ class MCNPXParser:
                 union = re.split('[:]+', geometry)
             offset = ['inf', 'inf', 'inf', 'inf', 'inf', 'inf']
             print(union)
-            print("jaja1")
             for surface in union:
                 surface = surface.replace(" ", "");
                 if (isComplement):

@@ -31,7 +31,7 @@
 
 import sys
 import getopt
-
+import os
 import povray
 import MCNPXParser
 
@@ -51,10 +51,9 @@ def parse(inputFile, surfacesFile, cellsFile, universesFile, importanceFile, mat
 ################################
 #  INITIALISE
 ################################	
-	
+	print("Initialising preparser")
 	parser = MCNPXParser.MCNPXParser(inputFile, surfacesFile)
 	parser.preProcess() # remove unnecessary data out of the mcnpx file (i.e. comments)
-	
 	fileSurfaces=povray.File(surfacesFile)
 	fileCells=povray.File(cellsFile)
 	fileUniverses=povray.File(universesFile)
@@ -75,7 +74,9 @@ def parse(inputFile, surfacesFile, cellsFile, universesFile, importanceFile, mat
 	# write all materials defined in the mcnpx data block to fileMaterials
 	# including the optional name for the material
 	print(parser.materialCards)
-	for mat in list(parser.materialCards.keys()): 
+	for mat in list(parser.materialCards.keys()):
+		print(mat)
+		print(str(mat) + " " + str(parser.materialCardsName[int(mat)]))
 		fileMaterials.writeln(str(mat) + " " + str(parser.materialCardsName[int(mat)]))
 	
 	print("\nPREPARSING SURFACE CARDS")
@@ -111,8 +112,8 @@ def parse(inputFile, surfacesFile, cellsFile, universesFile, importanceFile, mat
 	print("\nPREPARSING COMPLETED")
 	
 	print("TITLE MCNPX: " + parser.title)
-
-	
+	print("current directory: " + str( os.getcwd()))
+	print("does temp exist: " + str(os.path.isdir("C:\\Users\\sfs81547\\Documents\\MCNPX_Visualizer\\temp")))
 	parser.close()
 
 # initialize the parameters for the preparser
@@ -133,6 +134,8 @@ def initialize():
 		return 1
 
 	# process arguments
+	for arg in args:
+		print(arg)
 	parse(args[0], args[1], args[2], args[3], args[4], args[5], args[6])
 	
 
