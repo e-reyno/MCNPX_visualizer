@@ -73,9 +73,8 @@ def parse(inputFile, surfacesFile, cellsFile, universesFile, importanceFile, mat
 	
 	# write all materials defined in the mcnpx data block to fileMaterials
 	# including the optional name for the material
-	print(parser.materialCards)
 	for mat in list(parser.materialCards.keys()):
-		print(mat)
+
 		print(str(mat) + " " + str(parser.materialCardsName[int(mat)]))
 		fileMaterials.writeln(str(mat) + " " + str(parser.materialCardsName[int(mat)]))
 	
@@ -112,8 +111,6 @@ def parse(inputFile, surfacesFile, cellsFile, universesFile, importanceFile, mat
 	print("\nPREPARSING COMPLETED")
 	
 	print("TITLE MCNPX: " + parser.title)
-	print("current directory: " + str( os.getcwd()))
-	print("does temp exist: " + str(os.path.isdir("C:\\Users\\sfs81547\\Documents\\MCNPX_Visualizer\\temp")))
 	parser.close()
 
 # initialize the parameters for the preparser

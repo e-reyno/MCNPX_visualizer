@@ -56,7 +56,7 @@ def parse(inputFile, outputFile, colorMapFile):
 	parser.preProcess()	# remove unnecessary data out of the mcnpx file (i.e. comments)
 	
 	file=povray.File(outputFile,"colors.inc","stones.inc")
-	fileImp=povray.File(outputFile+"_imp0.pov");
+	fileImp=povray.File(outputFile+"_imp0.pov")
 	
 ################################
 #  PARSING
@@ -113,6 +113,8 @@ def parse(inputFile, outputFile, colorMapFile):
 	imp0Items = []
 	for i, card in  (enumerate(parser.cellCards)): # use enumerate to sort the cell cards to be builded
 		cellCard = parser.getCellCard(card)
+		print("cell card " + str(i) + ": \n")
+		print(cellCard)
 		if (cellCard and "IMP" in cellCard.params):
 			# cellcard with imp=0 doesn't need to be builded with colors and to the main pov-ray output file
 			# it will be build without colors and a smaller scale to the fileImp output
@@ -232,7 +234,7 @@ def initialize():
 	if len(args) != 3:
 		print("ERROR (MCNPXtoPOV.py): not enough arguments")
 		return 1
-	
+	print(args[0], args[1], args[2])
 	parse(args[0], args[1], args[2])
 	
 

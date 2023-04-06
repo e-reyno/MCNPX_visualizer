@@ -38,7 +38,8 @@ RenderManager::RenderManager(QString povFile, QString outputFile, int width, int
 	_quality = 1;
 	_antialias = false;
 	_isSnapShot = false;
-
+    std::cout << "HELLO THIS FILE PATH IS:: \n";
+    std::cout << povFile.toStdString() << std::endl;
 	cthread = thread();
 	
 	// Give the information to the ini manager for POV-Ray
@@ -117,7 +118,7 @@ void RenderManager::render(bool isSnapShot)
 	_progress = 0.0;
 	_isFirstRenderedImage = true;
 	_isSnapShot = isSnapShot;
-	for (int i=0; i<this->_renderers.size(); i++)
+    for (size_t i=0; i<this->_renderers.size(); i++)
 	{
 		_renderers[i]->render();
 	}

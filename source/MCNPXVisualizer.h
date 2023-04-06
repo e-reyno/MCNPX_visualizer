@@ -208,7 +208,7 @@ class MCNPXVisualizer : public QMainWindow
 		PythonBinder* _pythonBinder;
 
 		// MATERIALS
-		int _currentColorIndex;
+        size_t _currentColorIndex;
 		std::vector<QColor> _colorMap;
 		std::map<QString, Material*> _standardMaterials;
 		std::map<int, Material*> _savedMaterials;

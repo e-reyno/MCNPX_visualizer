@@ -39,6 +39,9 @@ class SceneDrawer : public QOpenGLWidget
 		void setYPlaneMin(float pos);
 		void setYPlaneMax(float pos);
 
+        void setXRotation(int angle);
+        void setZRotation(int angle);
+
 		float getZPlaneMin(){ return _zPlaneMin; }
 		float getZPlaneMax(){ return _zPlaneMax; }
 		float getXPlaneMin(){ return _xPlaneMin; }
@@ -85,7 +88,7 @@ class SceneDrawer : public QOpenGLWidget
 
 		bool _alt;					// Alt pressed
 		bool _ctrl;					// Ctrl pressed
-
+        bool _shift;                // shift pressed
 		
 		float _verticalOffset;		// Offset between the vertical mouse position between two frames
 		float _horizontalOffset;	// Offset between the horizontal mouse position between two frames
@@ -118,6 +121,9 @@ class SceneDrawer : public QOpenGLWidget
 		float _elevation;
 		float _distance;
 
+        int xrot = 0;
+        int zrot = 0;
+
 		// Timer for the frame updater
 		QTimer *_frameUpdateTimer;
 
@@ -133,4 +139,6 @@ class SceneDrawer : public QOpenGLWidget
 		void cameraStrafeChanged(float strafeX, float strafeY, float strafeZ);	// emits when the strafe of the camera is changed
 		void statusChanged(QString status, int timeout);						// emits when there needs to be information printed to the status bar
 		void informationChanged();												// emits when there is an important change of internal information
- };
+        void xrotationchanged(int angle);
+        void zrotationchanged(int angle);
+};

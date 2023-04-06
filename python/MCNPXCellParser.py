@@ -75,14 +75,14 @@ def parse(inputFile, outputFile, cellFile, colorMapFile):
     parser.parseCells()
     
     print("\tUniverses Found:", end=' ')
-    for uni in parser.universes:
-        print(str(uni) + "", end=' ')
-    print("")
+    #
+    # for uni in parser.universes:
+        #print(str(uni) + "", end=' ')
 
 ################################
 #  BUILDING
 ################################
-    print("BUILD CELL CARDS")
+    print("BUILDING CELL CARDS")
     
     # write a standard macro for drawing universes in Pov-Ray which can be used for every sort of universe
     file.writeln("//Macro's for drawing")
@@ -110,8 +110,12 @@ def parse(inputFile, outputFile, cellFile, colorMapFile):
     items = [] # this list will contain all the builded cell cards
     cellF = open(cellFile, 'r+')
     for line in cellF:
+        print("\n" + line)
         if (line != ""):
+            
             povItem = parser.buildCell(cellNumber = int(line), parent = -1, depth = 0,  buildVoid = buildVoid, useColor=True)
+            print(povItem)
+            print(" \n")
             if (povItem):
                 items.append(["//" + parser.getGeometryOfCellCard(line), povItem])
 

@@ -26,9 +26,11 @@ class CellCard:
 		self.geometry = geometry		# cell card geometry
 		self.d = d						# cell card density (not always specified)
 		self.paramsData = paramsData	# parameters of the cell card (full string)
-		self.params = {}				# parsed parameters of the cell	
+		self.params = {'FILL':[] , '*FILL':[], 'AREA':[], 'VOL':[], 'U':[], 'TRCL':[], 
+                 '*TRCL':[], 'LAT':[], 'TR':[], 'IMP':[], 'MAT':[], 'RHO':[], 'PWT':[], 
+                 'EXT':[], 'FCL':[], 'WWN':[], 'DXC':[], 'NONU':[], 'PD':[], 'TMP':[]}	# parsed parameters of the cell	
 		self.like = like				# LIKE BUT parameters
-
+		self.dict = {"test":[], "a": []}
 		self.subsurfaceMap = {}			# contains a mapping of a subsurface of the form '(...)' to an identifier
 		self.subsurfaceMapInv = {}		# contains a mapping of an identifier of a subsurface to an POV ray item
 		self.charToGeometry = {}
@@ -115,13 +117,13 @@ class CellCard:
 	#------------------------------------------------------------------------------------------------------------------
 	def interpretParameters(self):
 		params =  self.params
-
 		# CHECK IF THE CELL CONTAINS A LATTICE
 		self.hasLAT = False
-		if ('LAT' in params):
+		if ("LAT" in params.keys()):
 			# a cell containing a LAT also needs to have a FILL parameter
-			if ('FILL' in params or '*FILL' in params):
+			if (any(["FILL", "*FILL"]) in params.keys()):
 				self.hasLAT = True
+				print(params["LAT"])
 				self.typeLAT = int(params['LAT'])
 
 				if ((self.typeLAT == 1) or (self.typeLAT == 2)):
@@ -156,15 +158,15 @@ class CellCard:
 								latUniversesNew.append(latUniverses[i])
 						self.latUniverses = latUniversesNew
 					else:
-						#print "ERROR (Cell " + str(self.number) + "): no fully specified fill found in cell " + str(self.number) + " [CellCard::interpretParameters]"
-						raise Exception("ERROR (Cell " + str(self.number) + "): no fully specified fill found in cell " + str(self.number) + " [CellCard::interpretParameters]")
+						print("ERROR (Cell " + str(self.number) + "): no fully specified fill found in cell " + str(self.number) + " [CellCard::interpretParameters]")
+						raise Exception
 				else:
 					raise Exception
 			else:
 				raise Exception
 				print() 
 				return 0
-		elif ('FILL' in params or '*FILL' in params):
+		elif (any(["FILL", "*FILL"]) in params.keys()):
 			if (not self.hasLAT):
 				if 'FILL' in params:
 					fill = params['FILL']
@@ -194,7 +196,7 @@ class CellCard:
 											transformParamsItems[6], transformParamsItems[7], transformParamsItems[8],
 											transformParamsItems[9], transformParamsItems[10], transformParamsItems[11])
 					
-		if ('TRCL' in params):
+		if ('TRCL' in params.keys()):
 			trcl = params['TRCL']
 			transformParams = re.findall('(?<=\()[\d,\D,\s]+(?=\))', trcl)
 			if (len(transformParams) >= 1):
@@ -210,7 +212,7 @@ class CellCard:
 						transformParamsItems[6], transformParamsItems[7], transformParamsItems[8],
 						transformParamsItems[9], transformParamsItems[10], transformParamsItems[11])
 					
-		elif ('*TRCL' in params):
+		elif ('*TRCL' in params.keys()):
 			trcl = params['*TRCL']
 			transformParams = re.findall('(?<=\()[\d,\D,\s]+(?=\))', trcl)
 			if (len(transformParams) >= 1):
@@ -235,88 +237,68 @@ class CellCard:
 	def parseParameters(self):
 		currentParam = ' '
 		foundParamWithoutEqualSign = False
-		
 		dh = DataHolder()
 		for i in range(0,len(self.paramsData)):
+			#print(self.paramsData[i])
 			if (dh.set(re.match('^[\s]*FILL[\s]*[=]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'FILL'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*\*FILL[\s]*[=]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = '*FILL'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*AREA[\s]*[=]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'AREA'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*VOL[\s]*[=]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'VOL'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*U[\s]*[=]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'U'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*TRCL[\s]*[=]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'TRCL'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*\*TRCL[\s]*[=]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = '*TRCL'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])	
 			elif (dh.set(re.match('^[\s]*LAT[\s]*[=]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'LAT'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*TR[\s]*[=]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'TR'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*IMP[\s]*[:]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'IMP'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*MAT[\s]*[:]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'MAT'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*RHO[\s]*[:]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'RHO'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*PWT[\s]*[:]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'PWT'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*EXT[\s]*[:]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'EXT'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*FCL[\s]*[:]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'FCL'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*WWN[\s]*[:]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'WWN'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*DXC[\s]*[:]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'DXC'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*NONU[\s]*[:]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'NONU'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*PD[\s]*[:]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'PD'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			elif (dh.set(re.match('^[\s]*TMP[\s]*[:]?(?P<data>[\S]*)', self.paramsData[i] ,flags=re.IGNORECASE))):
 				currentParam = 'TMP'
-				self.params[currentParam] = [];
 				self.params[currentParam].append(dh.value.groupdict()['data'])
 			else:
 				if (currentParam == ' '):
@@ -328,12 +310,13 @@ class CellCard:
 					self.params[currentParam].append(self.paramsData[i])
 				foundParamWithoutEqualSign = False
 		
-		# combine all the parameter data per parameter 
+		# combine all the parameter data per parameter
+		params = {}
 		for param in self.params:
 			if len(self.params[param]) == 0:
 				continue
 			container.Container.remove_values_from_list(self.params[param], "")
 			paramString = ' '.join(self.params[param])
-			self.params[param] = paramString
-		
+			params[param] = paramString
+		self.params = params
 		self.interpretParameters()

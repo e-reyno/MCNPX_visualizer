@@ -31,7 +31,7 @@ PovRayRenderer::PovRayRenderer(QString povFile, QString initFile)
 	connect(&_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished( int, QProcess::ExitStatus)));
     connect(&_process, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
 	connect(&_process, SIGNAL(started()), this, SLOT(started()));
-    //connect(&_process, SIGNAL(stateChanged(QProcess::ProcessState newState)), this, SLOT(stateChanged(QProcess::ProcessState newState)));
+	connect(&_process, SIGNAL(stateChanged(QProcess::ProcessState newState)), this, SLOT(stateChanged(QProcess::ProcessState newState)));
 
 	// Call-back for the standard output of the subprocess
 	connect(&_process, SIGNAL(readyReadStandardOutput()),this, SLOT(displayOutputMsg()));
@@ -62,7 +62,10 @@ void PovRayRenderer::render()
 {	
 
 	QStringList args;
-	
+    for (int i{}; i < args.size(); i++)
+    {
+        std::cout << args[i].toStdString();
+    }
 	#ifndef unix
 		args.push_back(QString("/EXIT"));
 		args.push_back(QString("/RENDER"));
@@ -75,7 +78,7 @@ void PovRayRenderer::render()
 
 	args.push_back(_init);
 	#ifdef unix
-		//args.push_back( QString("+WL0"));
+        args.push_back( QString("+WL0"));
 	#endif
 		_process.setReadChannel(QProcess::StandardOutput);
     #ifdef _WIN32

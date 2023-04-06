@@ -140,6 +140,9 @@ c surface cards
 96 py -75
 97 py -45
 98 px 308
+c 99 px -999
+c 100 px 999
+c 101 pz -5
 
 c data cards
 mode n p

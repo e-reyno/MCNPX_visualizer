@@ -189,6 +189,7 @@ class MCNPXParser:
                 
                 # see if the cell is part of a universe. If so, add it the universe
                 if ('U' in card.params):
+                    print("found u 192")
                     if (card.params['U'] in self.universes):
                         self.universes[card.params['U']].append(card.number)
                     else:
@@ -235,7 +236,7 @@ class MCNPXParser:
                             parametersStarted = True
 
                         card.paramsData.append(cellCard[n])
-                        print(card.paramsData)
+                        #print(card.paramsData)
                     else:
                         # reading geometry
                         card.geometry.append(cellCard[n])
@@ -244,7 +245,8 @@ class MCNPXParser:
                 card.parseParameters()
 
                 # if the cell card is part of a universe, add it
-                if (card.params['U']):
+                if "U" in card.params.keys():
+                    print("universe accepted")
                     if (card.params['U'] in self.universes):
                         self.universes[card.params['U']].append(card.number)
                     else:
@@ -254,7 +256,7 @@ class MCNPXParser:
                 
     # ==> parseCellCardGeometry(cellNumber)
     # given the cellNumber, parse the geometry and parameters and put them in the right cellcard object
-    # subsurfaces are already build and stored in the subsurfaceMapInv or subsurfaceMapInvColor
+    # subsurfaces are already built and stored in the subsurfaceMapInv or subsurfaceMapInvColor
     #   (subsurfaceMapInv contains povray objects without color-
     # The dictionary contains a map from a two-character word to a builded povray object
     #   i.e.: #(300 : 500) will be transformed to #aa where aa->object(300 : 500)
@@ -295,7 +297,7 @@ class MCNPXParser:
             if (cellCard.fullGeometry[i] == '('):
                 openBrackets = openBrackets + 1
                 bracketPositions.append(i)
-                #print "Found open bracket at position " + str(i) + " (total: " + str(openBrackets) + ")"
+                #print("Found open bracket at position " + str(i) + " (total: " + str(openBrackets) + ")")
             elif (cellCard.fullGeometry[i] == ')'):
                 # define the substring for the subsurface
                 beginPos = bracketPositions.pop()
@@ -475,8 +477,8 @@ class MCNPXParser:
         # build the full geometry of the cell card
         totalPovRayBuild = self.buildSubGeometry(card.fullGeometry, card, card.getPovRayArgs(), useColor, scale)# )
 
-        if card.number == 201:
-            print(card)
+#        if card.number == 201:
+            #print(card)
             
         if (self.complementCard != None):
             return totalPovRayBuild
@@ -1257,7 +1259,7 @@ class MCNPXParser:
             bbExists = False
         
         if (bbExists):  
-            print(card)
+            # print(card)
             box = self.getBoundingBoxOfGeometry(surface)
             # copy the bounding box in bb
             if (box):
@@ -1493,7 +1495,7 @@ class MCNPXParser:
             inverseWrite = ''
             
         if (self.complementCard != None):
-            print(str(material) + " to " + str(self.complementCard.material))
+            #print(str(material) + " to " + str(self.complementCard.material))
             material = self.complementCard.material
             
             print("material complement")
@@ -1980,10 +1982,10 @@ class MCNPXParser:
         
         # store the previous commentary line in this variable (used for seeking the name of a material
         previousCommentaryLine = None
-        print("data block comments:" + str(self.dataBlockComments))
+        #print("data block comments:" + str(self.dataBlockComments))
         # read all data cards out of file and put them in surfaceCards
         for line in self.dataBlockComments:
-            print(line)
+            #print(line)
             dh = DataHolder()
 
             # see if the current line is a commentary line
@@ -1992,7 +1994,7 @@ class MCNPXParser:
                 previousCommentaryLine = line
                 continue
 
-                
+
             dataCard = re.split('[\s]+', line)
             container.Container.remove_values_from_list(dataCard, '')
             
@@ -2111,8 +2113,8 @@ class MCNPXParser:
         found = []
         
         for card in self.cellCards:
-            print("printing cell card: \n")
-            print(self.cellCards[card].params)
+            #print("printing cell card: \n")
+            #print(self.cellCards[card].params)
             if ("IMP" in self.cellCards[card].params):
 
                 #print(self.cellCards[card])
