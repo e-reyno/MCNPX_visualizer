@@ -928,9 +928,9 @@ void SceneDrawer::wheelEvent(QWheelEvent *event)
     int numDegrees = event->angleDelta().y() / 8;
     float numSteps = numDegrees / 15.0;
 
-    if (event->angleDelta().y() < 0){
+    if (event->angleDelta().y() > 0){
         this->setDistance(_distance + numSteps *(0.1)*_distance);
-    } else if (event->angleDelta().y() > 0){
+    } else if (event->angleDelta().y() < 0){
         this->setDistance(-_distance - numSteps *(0.1)*_distance);
     }
 	// Update the statusbar information
