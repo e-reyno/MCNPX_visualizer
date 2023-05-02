@@ -30,6 +30,12 @@
 import re
 import copy
 import math
+import os
+print("PYTHONPATH:", os.environ.get('PYTHONPATH'))
+print("PATH:", os.environ.get('PATH'))
+import sys
+print(sys.path)
+import numpy as np
 
 import MCNPXPreProcess
 import BoundingBox
@@ -148,11 +154,11 @@ class MCNPXParser:
         
         beginPos = 0
         
-        e = re.match('(?P<title>^[\s]*[\D]+[\S\s]*)', line ,flags=re.IGNORECASE)
+        e = re.match(r'(?P<title>^[\s]*[\D]+[\S\s]*)', line ,flags=re.IGNORECASE)
         if e:
             self.title = e.groupdict()['title']
             beginPos = 1
-        e = re.match('^[\s]*TITLE[\s]*[:]?(?P<title>[\S\s]*)', line ,flags=re.IGNORECASE)
+        e = re.match(r'^[\s]*TITLE[\s]*[:]?(?P<title>[\S\s]*)', line ,flags=re.IGNORECASE)
         if e:
             self.title = e.groupdict()['title']
             beginPos = 1
@@ -164,22 +170,22 @@ class MCNPXParser:
             #print("line number " + str(i) + "\n")
             #print(line)
 
-            cellCard = re.split('[\s]+', line) 
+            cellCard = re.split(r'[\s]+', line) 
             container.Container.remove_values_from_list(cellCard, '')
             
-            title = re.match('^[\s]*TITLE[\s]*[:]?(?P<title>[\S\s]*)', line ,flags=re.IGNORECASE)
+            title = re.match(r'^[\s]*TITLE[\s]*[:]?(?P<title>[\S\s]*)', line ,flags=re.IGNORECASE)
             
             
             # check if the form is of the second type (LIKE)
-            likeCell = re.findall('(?<=like )[\d]+(?= BUT)', line, flags=re.IGNORECASE)
+            likeCell = re.findall(r'(?<=like )[\d]+(?= BUT)', line, flags=re.IGNORECASE)
             #print("check form is type like: \n")
             #print(likeCell)
             if (  len(likeCell) == 1 ):
                 likeCell = likeCell[0] # likeCell is the reference cell number
-                likeParams = re.findall('(?<=but)[\d,\D,\s]+', line, flags=re.IGNORECASE)
+                likeParams = re.findall(r'(?<=but)[\d,\D,\s]+', line, flags=re.IGNORECASE)
                 likeParams = likeParams[0].replace("&", " ")
                 
-                cellCardP = re.split('[\s]+', likeParams)
+                cellCardP = re.split(r'[\s]+', likeParams)
                 
                 # copy the reference cell card and change it with the new parameters
                 card = copy.deepcopy(self.cellCards[int(likeCell)])
@@ -251,7 +257,8 @@ class MCNPXParser:
                         self.universes[card.params['U']].append(card.number)
                     else:
                         self.universes[card.params['U']] = [card.number]
-
+                if card.number == 3314:
+                    print("yes")
                 self.parseCellCardGeometry(card.number) # parse the geometry of the cell
                 
     # ==> parseCellCardGeometry(cellNumber)
@@ -293,12 +300,17 @@ class MCNPXParser:
         # if closing: interpret substring defined by the range cellCard.fullGeometry[bracketPositions.last(), currentPosition]
         # the builded Povray object is stored at the subsurfaceMapInv dictionary
         bracketPositions = []
-        for i in range(0 , len(cellCard.fullGeometry)):
-            if (cellCard.fullGeometry[i] == '('):
+        if cellCard.fullGeometry == "((349 -1807 -354 365 -352 351 346):(349 -1807 -365 482 -355 346):(349 -1807 -482 346 -497 350):(349 -1807 -350 320 346 -484):(4017 -1807 -320 491 297 -484)) (-4016:4017:-4015:4021:-346:355):(-320 4015 355 -484 349 -4000)":
+
+            print("yes")
+        if cellNumber == 3314:
+            print("yes")
+        for i, geom in enumerate(cellCard.fullGeometry):
+            if (geom == '('):
                 openBrackets = openBrackets + 1
                 bracketPositions.append(i)
                 #print("Found open bracket at position " + str(i) + " (total: " + str(openBrackets) + ")")
-            elif (cellCard.fullGeometry[i] == ')'):
+            elif (geom == ')'):
                 # define the substring for the subsurface
                 beginPos = bracketPositions.pop()
                 openBrackets = openBrackets - 1
@@ -313,11 +325,15 @@ class MCNPXParser:
                 cellCard.subsurfaceMapInvColor[chr(self.subsurfaceMapNumberA)+chr(self.subsurfaceMapNumberB)] = self.buildSubGeometry(newSubGeometry,cellCard, {}, True)#cellCard.getPovRayArgs()) # parse the subcell between the brackets to a pov ray item
                 cellCard.subsurfaceMapInv[chr(self.subsurfaceMapNumberA)+chr(self.subsurfaceMapNumberB)] = self.buildSubGeometry(newSubGeometry,cellCard, {}, False)
                 cellCard.charToGeometry[chr(self.subsurfaceMapNumberA)+chr(self.subsurfaceMapNumberB)] = "(" + newSubGeometry + ")"#cellCard.fullGeometry[beginPos+1:i]
+                if (chr(self.subsurfaceMapNumberA) + chr(self.subsurfaceMapNumberB)) == " ak   al : am ":
+                    print("yes")
                 self.subsurfaceMapNumberB = self.subsurfaceMapNumberB + 1
                 if (self.subsurfaceMapNumberB > (97 + 25)):
                     self.subsurfaceMapNumberB = 97
                     self.subsurfaceMapNumberA = self.subsurfaceMapNumberA + 1
-
+                if (self.subsurfaceMapNumberA) > (97 + 25):
+                    self.subsurfaceMapNumberA = 97
+                    self.subsurfaceMapNumberB = 97
                 
         # every subsurface is now calculated and a mapping to the pov ray item is added in the subsurface map
         # now we replace the subsurfaces in the total geometry statement so it can be interpreted
@@ -504,7 +520,7 @@ class MCNPXParser:
 
     # ==> buildLattice(latticeCard, parent, depth, buildVoid = False):
     # Build the lattice that is defined in the latticeCard
-    #       latticeCard = card that contains the lattice that need to be build
+    #       latticeCard = card that contains the lattice that need to be buildgetboundingboxofge
     #       parent = identifier of the parent cell/universe
     #       depth = specifies the depth of the cell in the universe hierarchy 
     #       buildVoid = specify if cells with empty materials will be rendered
@@ -547,7 +563,7 @@ class MCNPXParser:
                 if (noInf):
                     bbParent = BoundingBox.BoundingBox(offset[0],offset[1],offset[2],offset[3],offset[4],offset[5])
                 
-            bb = self.getBoundingBoxOfGeometry(latticeCard.fullGeometry)
+            bb = self.getBoundingBoxOfGeometryOfCell(latticeCard.number)
             offset = self.getRectangularOffset(latticeCard)
             
             if (offset[0] != 'inf' and offset[3] != 'inf'):
@@ -563,7 +579,7 @@ class MCNPXParser:
             else:
                 offsetZ = 0
             
-            hasBB = True    
+            hasBB = True
             for o in offset:
                 if o == 'inf':
                     hasBB = False
@@ -575,8 +591,6 @@ class MCNPXParser:
             if (latticeCard.minK == 0 and latticeCard.maxK == 0):
                 if (not hasBB or not bbParent):
                     raise Exception
-                    minK = 0
-                    maxK = 0
                 else:
                     if (bbParent):
                         width = offset[5] - offset[2]
@@ -959,7 +973,7 @@ class MCNPXParser:
             return 0 # couldn't calculate bounding box if there if the cell is combined of a union
         else:
             # single element or intersection
-            intersection = re.split('[\s]+', geometry)
+            intersection = re.split(r'[\s]+', geometry)
             container.Container.remove_values_from_list(intersection, "")
             if (len(intersection) == 0 ):
                 return 0 # no element in geometry
@@ -968,9 +982,9 @@ class MCNPXParser:
                 totalBoundingBox = BoundingBox.BoundingBox()
                 totalBoundingBox.exists = True
                 for geom in intersection:
-                    if (re.search('[a-z,A-Z]+', geom)):
-                        raise Exception
-                        return 0
+                    if (re.search(r'[a-z,A-Z]+', geom)):
+                        raise ValueError("invalid geometry found - should be numerical surfaces")
+                        #return 0
                     else:
                         surface = geom
                         if (surface[0] == '-'):
@@ -979,7 +993,6 @@ class MCNPXParser:
                             return 0 # unable to find bounding box for complements
                         else:
                             surface = surface
-                        print(geometry)
                         bb =  self.surfaceCards[int(surface)].getBoundingBox()
                         if (bb):
                             totalBoundingBox.append(bb)
@@ -990,7 +1003,7 @@ class MCNPXParser:
                     
                 
         
-    # ==> buildSubGeometry(geometry, card, povRayArgs={}, useColor=True, scale= 1.0):
+    # ==> buildSubGeometry(geometry, card, povRayArgs={}, useColor=True, scale= 1.0):def parse
     # build the geometry or sub-geometry of a cell to a POV Ray element
     # split the geometry in unions and intersections and bundle the surfaces in a correct way
     # output = povray object
@@ -1003,17 +1016,17 @@ class MCNPXParser:
     def buildSubGeometry(self, geometry, card, povRayArgs={}, useColor=True, scale= 1.0):
         # seek for unions
         
-        if (re.search('\:', geometry)):
+        if (re.search(r'\:', geometry)):
             
             totalBoundingBox = BoundingBox.BoundingBox()
             totalBoundingBox.exists = True
-            union = re.split('[\:]', geometry)
+            union = re.split(r'[\:]', geometry)
             unionList = []
 
             for surface in union:
                 if (surface == ""):
                     pass #ignore empty surfaces
-                elif (re.search('[a-z,A-Z]+', surface)): # if the subsurface is subsurface identifier
+                elif (re.search(r'[a-z,A-Z]+', surface)): # if the subsurface is subsurface identifier
                     # subsurface found
                     # request the already calculated subsurface out of the subsurfaceMapInv
                     if (surface[0] == '-'):
@@ -1036,6 +1049,8 @@ class MCNPXParser:
                                 unionList.append(povray.Object(povItem,'inverse'))
                     else:
                         if (useColor):
+                            if surface.strip() == "ak   al":
+                                print("success")
                             povItem = card.subsurfaceMapInvColor[surface.strip()]
                             if povItem:
                                 unionList.append(povItem)
@@ -1066,12 +1081,16 @@ class MCNPXParser:
                 return 0
         # otherwise intersection (unless the number of surfaces is 1)
         else:
-            
+            # need to build bounding box to match cell properties not default (0)
             totalBoundingBox = BoundingBox.BoundingBox()
+            # get min and max values to build bounding box
             totalBoundingBox.exists = True
             geometry = geometry.replace('# ', "#")
-            intersection = re.split('[\s]+', geometry)
+            intersection = re.split(r'[\s]+', geometry)
             intersectionList = []
+            for s in intersection:
+                if "a" == s.strip():
+                    print("success")
             diff = self.buildIntersectionAsDifference(intersection, card, povRayArgs, useColor)
             if (diff):
                 pass
@@ -1079,7 +1098,7 @@ class MCNPXParser:
             for surface in intersection:
                 if (surface == ""):
                     pass #ignore empty surfaces
-                elif (re.search('[a-z,A-Z]+', surface)): # if the subsurface is subsurface identifier
+                elif (re.search(r'[a-z,A-Z]+', surface)): # if the subsurface is subsurface identifier
                     # subsurface found
                     # request the already calculated subsurface out of the subsurfaceMapInv
                     if (surface[0] == '-'):
@@ -1110,6 +1129,7 @@ class MCNPXParser:
                             if (povItem):
                                 intersectionList.append(povItem)
                 else: # a normal surface to interpret
+                    # needs parameters?
                     bb = BoundingBox.BoundingBox()
                     surf = self.buildCellSurface(str(surface), card, bb, useColor)
                     if (totalBoundingBox.exists and bb.exists):
@@ -1128,9 +1148,9 @@ class MCNPXParser:
                 if (scale != 1.0):
                     intersectionList.append('scale ' + str(scale))
                 bb = BoundingBox.BoundingBox()
-                if (totalBoundingBox.exists):
-                    intersectionList.append(povray.BoundingBox(totalBoundingBox.buildPOVRay()))
-                    intersectionList.append(povray.ClippedBy("bounded_by"))
+                #if (totalBoundingBox.exists):
+                    #intersectionList.append(povray.BoundingBox(totalBoundingBox.buildPOVRay()))
+                    #intersectionList.append(povray.ClippedBy("bounded_by"))
                 return povray.Intersection(*intersectionList,  **povRayArgs)
             else:
                 return 0
@@ -1151,7 +1171,7 @@ class MCNPXParser:
         for surface in intersection:
             if (surface == ""):
                 pass
-            elif (re.search('[a-z,A-Z]+', surface)):
+            elif (re.search(r'[a-z,A-Z]+', surface)):
                 # subsurface found
                 # request the already calculated subsurface out of the subsurfaceMapInv
                 if (surface[0] == '-'):
@@ -1174,6 +1194,8 @@ class MCNPXParser:
                             differences.append(povray.Object(povItem,'inverse'))
                 else:
                     if (useColor):
+                        if surface.strip() == "a":
+                            print("yay")
                         povItem = card.subsurfaceMapInvColor[surface.strip()]
                         if povItem:
                             differences.append(povItem)
@@ -1383,14 +1405,14 @@ class MCNPXParser:
         # read all surface cards out of file and put them in surfaceCards
         for line in self.surfaceBlock:
         
-            surfaceCard = re.split('[\s]+', line)
+            surfaceCard = re.split(r'[\s]+', line)
             container.Container.remove_values_from_list(surfaceCard, '')
             
             translation = 0
             rotation = 0
             mnemonic = 0
         
-            if (re.match('[\d]+', str(surfaceCard[1]))):
+            if (re.match(r'[\d]+', str(surfaceCard[1]))):
                 surfaceCardData =  surfaceCard[3:len(surfaceCard)]
                 translation =  self.transformationCards[surfaceCard[1]][0:3]
                 rotation =  self.transformationCards[surfaceCard[1]][3:]
@@ -1527,11 +1549,18 @@ class MCNPXParser:
         # PLANE
         # P -  with given normal and D  (3000 P A B C D)
         if (surfaceCard.mnemonic == 'P' or surfaceCard.mnemonic == 'p'):
-            if (len(surfaceCard.data) != 4):
-                raise Exception
+            
+            if (len(surfaceCard.data) == 9):
+                a,b, c, d = equation_plane(np.array(surfaceCard.data[:3]),
+                                           np.array(surfaceCard.data[3:6]),
+                                           np.array(surfaceCard.data[6:]))
+            elif (len(surfaceCard.data) == 4):
+                a, b, c, d = surfaceCard.data[0], surfaceCard.data[1], surfaceCard.data[2], surfaceCard.data[3]
+            else:
+                raise ValueError("Error in definition of plane: > 4 parameters defined (Ax + By + Cz + D =0)")
                 return
-            povrayObject = povray.Plane(povray.Vector(surfaceCard.data[0], surfaceCard.data[1], surfaceCard.data[2]), surfaceCard.data[3]/math.sqrt(math.pow(surfaceCard.data[0],2)+math.pow(surfaceCard.data[1],2)+math.pow(surfaceCard.data[2],2))
-            , texture, material, material, inverseWrite);
+            povrayObject = povray.Plane(povray.Vector(a, b, c), d/math.sqrt(math.pow(a, 2)+math.pow(b, 2)+math.pow(c, 2))
+            , texture, material, material, inverseWrite)
             
         # PX - PLANE with normal to x-axis and D (3000 PX D)
         elif (surfaceCard.mnemonic == 'PX' or surfaceCard.mnemonic == 'px'):
@@ -1967,8 +1996,6 @@ class MCNPXParser:
         return povrayObject
 
 
-
-
 #######################################################################################################################
 ## PARSING DATA CARDS
 #######################################################################################################################
@@ -1990,25 +2017,25 @@ class MCNPXParser:
 
             # see if the current line is a commentary line
             # if so, continue the loop and store it in previous line
-            if (dh.set(re.match('^[\s]*[c][\s]+', line ,flags=re.IGNORECASE))):
+            if (dh.set(re.match(r'^[\s]*[c][\s]+', line ,flags=re.IGNORECASE))):
                 previousCommentaryLine = line
                 continue
 
 
-            dataCard = re.split('[\s]+', line)
+            dataCard = re.split(r'[\s]+', line)
             container.Container.remove_values_from_list(dataCard, '')
             
             dataCardData =  dataCard[1:len(dataCard)]
             self.dataCards[str(dataCard[0])] = DataCard.DataCard(str(dataCard[0]),dataCardData)
             
             # check for transformation datacards
-            if (re.match("^tr", str(dataCard[0])) or re.match("^TR", str(dataCard[0]))):
+            if (re.match(r"^tr", str(dataCard[0])) or re.match(r"^TR", str(dataCard[0]))):
                 key = dataCard[0][2:]
                 key = key.replace("=", "")
                 container.Container.remove_values_from_list(dataCardData, "=")
                 self.transformationCards[key] = dataCardData
                 self.transformationCardsFlag[key] = False
-            if (re.match("^\*tr", str(dataCard[0])) or re.match("^\*TR", str(dataCard[0]))):
+            if (re.match(r"^\*tr", str(dataCard[0])) or re.match(r"^\*TR", str(dataCard[0]))):
                 key = dataCard[0][3:]
                 key = key.replace("=", "")
                 container.Container.remove_values_from_list(dataCardData, "=")
@@ -2018,12 +2045,12 @@ class MCNPXParser:
                 self.transformationCardsFlag[key] = True
                 
             # check for material data cards
-            if (dh.set(re.match('^[\s]*m(?P<material>[\d]+)[\s]+(?P<data>[\S\s]*)', line ,flags=re.IGNORECASE))):
+            if (dh.set(re.match(r'^[\s]*m(?P<material>[\d]+)[\s]+(?P<data>[\S\s]*)', line ,flags=re.IGNORECASE))):
                 material = int(dh.value.groupdict()['material'])
                 self.materialCards[material] = dh.value.groupdict()['data']
                 # check if there is a command line before the material card and if it defines a materials name for the card
                 if (previousCommentaryLine != None):
-                    if (dh.set(re.match('^[\s]*[c][\s]+[m]' + str(material) + '[\s]*[\=][\s]*(?P<data>[\S]*)', previousCommentaryLine ,flags=re.IGNORECASE))):
+                    if (dh.set(re.match(r'^[\s]*[c][\s]+[m]' + str(material) + r'[\s]*[\=][\s]*(?P<data>[\S]*)', previousCommentaryLine ,flags=re.IGNORECASE))):
                         self.materialCardsName[material] = dh.value.groupdict()['data']
                     else: 
                         self.materialCardsName[material] = None
@@ -2046,7 +2073,7 @@ class MCNPXParser:
         if (re.search('\:', geometry)):
             return 0
         else:
-            intersection = re.split('[\s]+', geometry)
+            intersection = re.split(r'[\s]+', geometry)
             container.Container.remove_values_from_list(intersection, "")
             if (len(intersection) > 1 or len(intersection) == 0):
                 return 0
@@ -2066,10 +2093,10 @@ class MCNPXParser:
     def getRectangularOffset(self, cellCard):
         print("simontest" + str(cellCard))
         geometry = cellCard.fullGeometry
-        if (re.search('\:', geometry)):
+        if (re.search(r'\:', geometry)):
             return 0
         else:
-            intersection = re.split('[\s]+', geometry)
+            intersection = re.split(r'[\s]+', geometry)
             container.Container.remove_values_from_list(intersection, "")
             offset = ['inf', 'inf', 'inf', 'inf', 'inf', 'inf']
             
@@ -2150,9 +2177,9 @@ class MCNPXParser:
 
         isCylinder = False
             
-        if (re.search('\:', geometry) or isComplement or re.match('^[\s]*[\d]+[\s]*$', geometry, flags=re.IGNORECASE)):
+        if (re.search(r'\:', geometry) or isComplement or re.match(r'^[\s]*[\d]+[\s]*$', geometry, flags=re.IGNORECASE)):
             if (isComplement):
-                union = re.split('[\s]+', geometry)
+                union = re.split(r'[\s]+', geometry)
             else:   
                 union = re.split('[:]+', geometry)
             offset = ['inf', 'inf', 'inf', 'inf', 'inf', 'inf']
@@ -2214,13 +2241,40 @@ class MCNPXParser:
                             + str(offset[3]) + "&" + str(offset[4]) + "&" + str(offset[5]) 
                                 + "&" + str(offset[0]) + "&" + str(offset[1]) + "&" + str(offset[2]))
         else: # TODO: process unions
-            intersection = re.split('[\s]+', geometry)
+            intersection = re.split(r'[\s]+', geometry)
             container.Container.remove_values_from_list(intersection, "")
                 
             if (len(intersection) == 1):
                 self.surfaceCards[int(intersection[0])].writeSurfaceToFile(file)
             if (len(intersection) == 0):
                 return 0
-        
+"""
+def equation_plane(x1, y1, z1, x2, y2, z2, x3, y3, z3):
+    a1 = x2 - x1
+    b1 = y2 - y1
+    c1 = z2 - z1
+    a2 = x3 - x1
+    b2 = y3 - y1
+    c2 = z3 - z1
+    a = b1 * c2 - b2 * c1
+    b = a2 * c1 - a1 * c2
+    c = a1 * b2 - b1 * a2
+    d = (- a * x1 - b * y1 - c * z1)
+    return a, b, c, d
+"""
+def equation_plane(p1, p2, p3):
+
+    # These two vectors are in the plane
+    v1 = p3 - p1
+    v2 = p2 - p1
+
+    # the cross product is a vector normal to the plane
+    cp = np.cross(v1, v2)
+    a, b, c = cp
+    # This evaluates a * x3 + b * y3 + c * z3 which equals d
+    d = np.dot(cp, p3)
+
+    return a, b, c, d
+
         
     
