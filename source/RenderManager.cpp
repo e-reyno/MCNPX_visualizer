@@ -77,7 +77,7 @@ void RenderManager::createRenderers()
 
 	if (_renderers.size() > 0)
 	{
-		for (int i=0; i<_renderers.size(); i++)
+        for (size_t i=0; i<_renderers.size(); i++)
 		{
 			delete _renderers[i];
 		}
@@ -184,7 +184,7 @@ QString RenderManager::getParsingTime()
 	int parseHour = 0;
 	int parseMin = 0;
 	int parseSec = 0;
-	for (uint i=0; i<_nProcess; i++)
+    for (size_t i=0; i<_nProcess; i++)
 	{
 		if (this->_renderers[i]->getInfo().parseHour > parseHour)
 			parseHour = this->_renderers[i]->getInfo().parseHour;
