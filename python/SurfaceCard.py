@@ -235,10 +235,10 @@ class SurfaceCard:
 			if (len(self.data) != 12):
 				print("WARNING: Get bounding box for surface " + str(self.number) + " of type " + str(self.mnemonic) + " failed.")
 				return 0
-			targetX = self.data[0] + self.data[3] + self.data[6] + self.data[9];
-			targetY = self.data[1] + self.data[4] + self.data[7] + self.data[10];
-			targetZ = self.data[2] + self.data[5] + self.data[8] + self.data[11];
-			bb = BoundingBox.BoundingBox(self.data[0], self.data[1], self.data[2], 
+			targetX = self.data[0] + self.data[3] + self.data[6] + self.data[9]
+			targetY = self.data[1] + self.data[4] + self.data[7] + self.data[10]
+			targetZ = self.data[2] + self.data[5] + self.data[8] + self.data[11]
+			bb = BoundingBox.BoundingBox(self.data[0], self.data[1], self.data[2],
 										targetX, targetY, targetZ)
 			return bb
 		
