@@ -121,14 +121,15 @@ class CellCard:
 		self.hasLAT = False
 		if ("LAT" in params.keys()):
 			# a cell containing a LAT also needs to have a FILL parameter
-			if (any(["FILL", "*FILL"]) in params.keys()):
+			if (any(key in params.keys() for key in ["FILL", "*FILL"])):
 				self.hasLAT = True
 				print(params["LAT"])
 				self.typeLAT = int(params['LAT'])
 
 				if ((self.typeLAT == 1) or (self.typeLAT == 2)):
 					# the cell describes a rectangular (square) lattice comprised of hexehedra
-					ranges = re.match('[ ]*[-]?[\d]+[:]{1}[\d]+[ ]+[-]?[\d]+[:]{1}[\d]+[ ]+[-]?[\d]+[:]{1}[\d]+[ ]+', params['FILL'][:100])
+					ranges = re.match(r'[-]?[\d]+[:][\d]+[ ]+[-]?[\d]+[:][\d]+[ ]+[-]?[\d]+[:]{1}[\d]+', params['FILL'][:100])
+					print(params["FILL"][:100])
 					if (ranges):
 						# parse the fully specified boundaries of the lattice
 						rangesItems = re.findall('[-]?[\d]+', ranges.group(0))
@@ -163,10 +164,8 @@ class CellCard:
 				else:
 					raise Exception
 			else:
-				raise Exception
-				print() 
-				return 0
-		elif (any(["FILL", "*FILL"]) in params.keys()):
+				raise ValueError("Fill parameter not found in cell card")
+		elif (any(key in params.keys() for key in ["FILL", "*FILL"])):
 			if (not self.hasLAT):
 				if 'FILL' in params:
 					fill = params['FILL']
