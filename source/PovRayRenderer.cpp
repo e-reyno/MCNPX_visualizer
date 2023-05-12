@@ -109,8 +109,6 @@ void PovRayRenderer::finished( int exitCode, QProcess::ExitStatus exitStatus)
 	{
 		emit finishedRendering(this->_info);
 	}
-	else
-		;
 }
 
 // ==> displayOutputMsg()
