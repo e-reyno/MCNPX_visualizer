@@ -2185,7 +2185,7 @@ class MCNPXParser:
             offset = ['inf', 'inf', 'inf', 'inf', 'inf', 'inf']
             print(union)
             for surface in union:
-                surface = surface.replace(" ", "");
+                surface = surface.replace(" ", "")
                 if (isComplement):
                         isMin = True
                 else:
@@ -2201,29 +2201,20 @@ class MCNPXParser:
                 else:
                     surface = surface
                 
+                #max_geom = 
                 if (self.surfaceCards[int(surface)].isCylinder()):
                     isCylinder = True
                     radius = self.surfaceCards[int(surface)].getCylinderRadius()
                     cylinderDirection = self.surfaceCards[int(surface)].getCylinderDirection()
+                elif (self.surfaceCards[int(surface)].isSphere()):
+                    boundary = self.surfaceCards[int(surface)].getSphericalOffset()
                     
-                    #direction = self.surfaceCards[int(surface)].getCylinderDirection()
                 else:
                     boundary = self.surfaceCards[int(surface)].getRectangularOffset(isMin)
-                    if (boundary):
-                        for i in range(0,3):
-                            if (offset[i] == 'inf'):
-                                offset[i] = boundary[i]
-                            else:
-                                if (not boundary[i] == 'inf'):
-                                    offset[i] = max(offset[i], boundary[i])
-                        for i in range(3,6):
-                            if (offset[i] == 'inf'):
-                                offset[i] = boundary[i]
-                            else:
-                                if (not boundary[i] == 'inf'):
-                                    offset[i] = min(offset[i], boundary[i])
+                if (boundary):
+                    offset = update_offset(offset, boundary)
             if (isCylinder):
-
+            # if cylinder present write cylinder to file
                 for i in range(0,6):
                     if (offset[i] == 'inf'):
                         offset[i] = 0.0
@@ -2231,6 +2222,7 @@ class MCNPXParser:
                         + str(offset[3]) + "&" + str(offset[4]) + "&" + str(offset[5]) 
                             + "&" + str(offset[0]) + "&" + str(offset[1]) + "&" + str(offset[2]) + "&" +  str(radius))
             else:
+                # check a simple macrobody to give to gui
                 if (len(union) == 1):
                     self.surfaceCards[int(union[0])].writeSurfaceToFile(file)
                 else:
@@ -2248,20 +2240,13 @@ class MCNPXParser:
                 self.surfaceCards[int(intersection[0])].writeSurfaceToFile(file)
             if (len(intersection) == 0):
                 return 0
-"""
-def equation_plane(x1, y1, z1, x2, y2, z2, x3, y3, z3):
-    a1 = x2 - x1
-    b1 = y2 - y1
-    c1 = z2 - z1
-    a2 = x3 - x1
-    b2 = y3 - y1
-    c2 = z3 - z1
-    a = b1 * c2 - b2 * c1
-    b = a2 * c1 - a1 * c2
-    c = a1 * b2 - b1 * a2
-    d = (- a * x1 - b * y1 - c * z1)
-    return a, b, c, d
-"""
+            
+def get_min_max(surfaces):
+    # start with a bb
+    for surface in surfaces:
+        
+        bb = BoundingBox.BoundingBox()
+
 def equation_plane(p1, p2, p3):
 
     # These two vectors are in the plane
@@ -2276,5 +2261,14 @@ def equation_plane(p1, p2, p3):
 
     return a, b, c, d
 
-        
-    
+def update_offset(offset, boundary):
+    for i, direction in enumerate(offset):
+        if direction == "inf":
+            offset[i] = boundary[i]
+        else:
+            if (not boundary[i] == "inf"):
+                if i < 3:
+                    offset[i] = max(offset[i], boundary[i])
+                elif i >= 3:
+                    offset[i] = min(offset[i], boundary[i])
+    return offset

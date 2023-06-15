@@ -1,0 +1,17 @@
+import MCNPXPreParser
+import unittest as ut
+
+class MCNPXPreParserTest(ut.TestCase):
+    
+    def test_parser(self):
+        file_name = "freia_cave_only.i"
+        inputFile = "C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer\\data\\" + str(file_name)
+        surfacesFile = "C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer\\temp\\" + str(file_name) + "_surfaces"
+        cellsFile = "C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer\\temp\\"+ str(file_name) + "_cells"
+        universesFile = "C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer\\temp\\"+ str(file_name) + "_universes"
+        importanceFile = "C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer\\temp\\"+ str(file_name) + "_importance"
+        materialsFile = "C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer\\temp\\"+ str(file_name) + "_materials"
+        cellTreeFile = "C:\\Users\\sfs81547\\Documents\\MCNPX_visualizer\\temp\\" + str(file_name) + "_cellTree"
+        MCNPXPreParser.parse(inputFile, surfacesFile, cellsFile, universesFile, importanceFile, materialsFile, cellTreeFile)
+if __name__ == "__main__":
+    ut.main()

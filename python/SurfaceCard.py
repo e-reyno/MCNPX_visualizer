@@ -10,9 +10,9 @@
 
 import povray
 import math
-import container
-import BoundingBox 
-import Rotation
+import container as container
+import BoundingBox as BoundingBox
+import Rotation as Rotation
 
 class SurfaceCard:
 
@@ -81,6 +81,8 @@ class SurfaceCard:
 			return True
 		else:
 			return False
+
+
 		
 	# ==> getCylinderRadius()
 	# If the mnemonic type is cylindrical, returns the radius of the cylinder
@@ -116,8 +118,33 @@ class SurfaceCard:
 			return self.data[0]
 		else:
 			return 0
-		
-			
+	def isSphere(self):
+		sphere_mnemonics = ["SO", "S", "SX", "SY", "SZ"]
+		if self.mnemonic.upper() in sphere_mnemonics:
+			return True
+		else:
+			return False
+	def getSphereRadius(self):
+		sphere_mnemonics = ["S0", "S", "SX", "SY", "SZ", "SO"]
+		if self.mnemonic.upper() in sphere_mnemonics:
+			return self.data[0]
+		else:
+			return 0
+	def getboundaries(self):
+		if self.isSphere():
+			max_x = self.data[0]
+			max_y = self.data[0]
+			max_z = self.data[0]
+			return [max_x, max_y, max_z]
+		else:
+			max_offset = self.getRectangularOffset(False)
+			if max_offset[0] != "inf":
+				max_x = max_offset[0]
+			if max_offset[1] != "inf":
+				max_y = max_offset[1]
+			if max_offset[2] != "inf":
+				max_z = max_offset[2]
+
 	# ==> writeSurfaceToFile(file)
 	# Used as a coupling for the GUI
 	# Only writes a surface to a file if it is a simple macrobody
@@ -524,4 +551,38 @@ class SurfaceCard:
 			return [-offsetX, -offsetY, -offsetZ, offsetX, offsetY, offsetZ]
 			
 		return 0
-				
+
+	def getSphericalOffset(self):
+		if (self.mnemonic == 'SO' or self.mnemonic == 'so' or self.mnemonic == 's0'):
+			if (len(self.data) != 1):
+				raise Exception("Only the radius should be defined for S0 sphere")
+			r = self.data[0]
+			offset = [0.0+r, 0.0+r, 0.0+r, 0.0-r, 0.0-r, 0.0-r]
+			return offset
+		if (self.mnemonic == 'S' or self.mnemonic == 's'):
+			if (len(self.data) != 4):
+				raise Exception("For generic sphere surface x,y,z must all be defined")
+			r = self.data[3]
+			offset = [self.data[0]+r, self.data[1]+r, self.data[2]+r, self.data[0]-r, self.data[1]-r, self.data[2]-r]
+			return offset
+		# SX -  Centered on x-axis  (3000 SX X R)
+		if (self.mnemonic == 'SX' or self.mnemonic == 'sx'):
+			if (len(self.data) != 2):
+				raise Exception("For centred x sphere surface x and radius must both be defined")
+			r = self.data[1]
+			offset = [self.data[0]+r, 0.0+r, 0.0+r, self.data[0]-r, 0.0-r, 0.0-r]
+			return offset
+		# SY -  Centered on y-axis  (3000 SY Y R)
+		if (self.mnemonic == 'SY' or self.mnemonic == 'sy'):
+			if (len(self.data) != 2):
+				raise Exception("For centred y sphere surface y and radius must both be defined")
+			r = self.data[1]
+			offset = [0.0+r, self.data[0]+r, 0.0+r, 0.0-r, self.data[0]-r, 0.0-r]
+			return offset
+		# SZ -  Centered on z-axis  (3000 SZ Z R)
+		if (self.mnemonic == 'SZ' or self.mnemonic == 'sz'):
+			if (len(self.data) != 2):
+				raise Exception("For centred z sphere surface z and radius must both be defined")
+			r = self.data[1]
+			offset = [0.0+r, 0.0+r, self.data[0]+r, 0.0-r, 0.0-r, self.data[0]-r]
+			return offset
