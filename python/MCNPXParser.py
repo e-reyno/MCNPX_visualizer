@@ -284,7 +284,7 @@ class MCNPXParser:
         cellCard.fullGeometry = str(cellCard.geometry[0])
         
         # combine the full geometry in a string that will be used for parsing
-        for subsurface in range(1, len(cellCard.geometry)):
+        for subsurface, _ in enumerate(cellCard.geometry):
             cellCard.fullGeometry = cellCard.fullGeometry + " " + str(cellCard.geometry[subsurface])
         # i.e. cellCard.fullGeometry = "A (B:C) D (F (G:H))" # STRING FOR TESTING BRACKETS
 
@@ -300,11 +300,7 @@ class MCNPXParser:
         # if closing: interpret substring defined by the range cellCard.fullGeometry[bracketPositions.last(), currentPosition]
         # the builded Povray object is stored at the subsurfaceMapInv dictionary
         bracketPositions = []
-        if cellCard.fullGeometry == "((349 -1807 -354 365 -352 351 346):(349 -1807 -365 482 -355 346):(349 -1807 -482 346 -497 350):(349 -1807 -350 320 346 -484):(4017 -1807 -320 491 297 -484)) (-4016:4017:-4015:4021:-346:355):(-320 4015 355 -484 349 -4000)":
 
-            print("yes")
-        if cellNumber == 3314:
-            print("yes")
         for i, geom in enumerate(cellCard.fullGeometry):
             if (geom == '('):
                 openBrackets = openBrackets + 1
@@ -325,8 +321,6 @@ class MCNPXParser:
                 cellCard.subsurfaceMapInvColor[chr(self.subsurfaceMapNumberA)+chr(self.subsurfaceMapNumberB)] = self.buildSubGeometry(newSubGeometry,cellCard, {}, True)#cellCard.getPovRayArgs()) # parse the subcell between the brackets to a pov ray item
                 cellCard.subsurfaceMapInv[chr(self.subsurfaceMapNumberA)+chr(self.subsurfaceMapNumberB)] = self.buildSubGeometry(newSubGeometry,cellCard, {}, False)
                 cellCard.charToGeometry[chr(self.subsurfaceMapNumberA)+chr(self.subsurfaceMapNumberB)] = "(" + newSubGeometry + ")"#cellCard.fullGeometry[beginPos+1:i]
-                if (chr(self.subsurfaceMapNumberA) + chr(self.subsurfaceMapNumberB)) == " ak   al : am ":
-                    print("yes")
                 self.subsurfaceMapNumberB = self.subsurfaceMapNumberB + 1
                 if (self.subsurfaceMapNumberB > (97 + 25)):
                     self.subsurfaceMapNumberB = 97
@@ -389,9 +383,6 @@ class MCNPXParser:
         topLevel = []
         for cellNumber in self.cellCards:
             card = self.getCellCard(cellNumber)
-            
-            
-            
             if (not card):
                 continue
             
@@ -421,8 +412,8 @@ class MCNPXParser:
         #if not card.params.has_key('U'):
         #   return ""
         if depth > 22:
-            #print card
-            #print depth
+            print(card)
+            print(depth)
             raise Exception
             return ""
         
@@ -492,9 +483,6 @@ class MCNPXParser:
     
         # build the full geometry of the cell card
         totalPovRayBuild = self.buildSubGeometry(card.fullGeometry, card, card.getPovRayArgs(), useColor, scale)# )
-
-#        if card.number == 201:
-            #print(card)
             
         if (self.complementCard != None):
             return totalPovRayBuild
@@ -1049,8 +1037,6 @@ class MCNPXParser:
                                 unionList.append(povray.Object(povItem,'inverse'))
                     else:
                         if (useColor):
-                            if surface.strip() == "ak   al":
-                                print("success")
                             povItem = card.subsurfaceMapInvColor[surface.strip()]
                             if povItem:
                                 unionList.append(povItem)
@@ -1088,9 +1074,6 @@ class MCNPXParser:
             geometry = geometry.replace('# ', "#")
             intersection = re.split(r'[\s]+', geometry)
             intersectionList = []
-            for s in intersection:
-                if "a" == s.strip():
-                    print("success")
             diff = self.buildIntersectionAsDifference(intersection, card, povRayArgs, useColor)
             if (diff):
                 pass
@@ -1194,8 +1177,6 @@ class MCNPXParser:
                             differences.append(povray.Object(povItem,'inverse'))
                 else:
                     if (useColor):
-                        if surface.strip() == "a":
-                            print("yay")
                         povItem = card.subsurfaceMapInvColor[surface.strip()]
                         if povItem:
                             differences.append(povItem)
@@ -2091,7 +2072,6 @@ class MCNPXParser:
     # Returns the offset of a rectangular shape specified in a cellcard geometry (offset = [minX, minY, minZ, maxX, maxY, maxZ])
     #------------------------------------------------------------------------------------------------------------------ 
     def getRectangularOffset(self, cellCard):
-        print("simontest" + str(cellCard))
         geometry = cellCard.fullGeometry
         if (re.search(r'\:', geometry)):
             return 0
